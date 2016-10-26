@@ -16,19 +16,12 @@ import java.util.List;
 public class MessageController {
     private static final Logger LOGGER = LogManager.getLogger(MessageController.class);
 
-    private final MessageService messageService;
-
     @Autowired
-    public MessageController(MessageService messageService) {
-        Assert.notNull(messageService, "Message service must exist!");
-        this.messageService = messageService;
-    }
+    private MessageService messageService;
 
     @RequestMapping(value = "/message", method = RequestMethod.POST)
     public Message add(@RequestBody final Message message) throws Exception {
-        int delay = (int) (Math.random() * 3000);
-        LOGGER.debug("delay set to: " + delay);
-        Thread.sleep(delay);
+        Thread.sleep(someDelay());
 
         message.setCreatedOn(LocalDateTime.now());
         message.setFormatted(message.getRough());
@@ -37,7 +30,15 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.GET)
-    public List<Message> all() {
-        return messageService.findAll();
+    public List<Message> all() throws Exception {
+        Thread.sleep(someDelay());
+
+        return messageService.find10();
+    }
+
+    private int someDelay() {
+        int delay = (int) (Math.random() * 3000);
+        LOGGER.debug("delay set to: " + delay);
+        return delay;
     }
 }

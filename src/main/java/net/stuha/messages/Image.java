@@ -2,26 +2,26 @@ package net.stuha.messages;
 
 
 class Image {
-    private Long id;
+    private String id;
 
-    private Long messageId;
+    private String messageId;
 
     private String thumbnail;
     private String image;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getMessageId() {
+    public String getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(Long messageId) {
+    public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
 
