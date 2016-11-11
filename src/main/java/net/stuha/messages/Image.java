@@ -1,13 +1,19 @@
 package net.stuha.messages;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
+@Entity
 class Image {
+    @Id
     private String id;
 
     private String messageId;
 
-    private String thumbnail;
-    private String image;
+    private String name;
+
+    private byte[] thumbnail;
+    private byte[] image;
 
     public String getId() {
         return id;
@@ -25,19 +31,27 @@ class Image {
         this.messageId = messageId;
     }
 
-    public String getThumbnail() {
+    public byte[] getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(String thumbnail) {
+    public void setThumbnail(byte[] thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public String getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

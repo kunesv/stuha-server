@@ -1,8 +1,14 @@
 package net.stuha.messages;
 
-import java.io.FileNotFoundException;
+import java.util.List;
 
 public interface ImageService {
+
     Image add(Image image);
-    Image find(String id) throws FileNotFoundException;
+
+    void addAll(List<Image> images, Message message);
+
+    Image find(String id) throws ImageNotFoundException;
+
+    Image thumbnail(String id) throws ImageNotFoundException;
 }

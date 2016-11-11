@@ -1,11 +1,15 @@
 package net.stuha.messages;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Entity
 class Message {
+    @Id
     private String id;
 
     private String userId;
@@ -18,7 +22,8 @@ class Message {
 
     private String iconPath;
 
-    private List<Image> images = new ArrayList<>();
+    @Transient
+    private List<String> images = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -76,11 +81,11 @@ class Message {
         this.iconPath = iconPath;
     }
 
-    public List<Image> getImages() {
+    public List<String> getImages() {
         return images;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<String> images) {
         this.images = images;
     }
 }
