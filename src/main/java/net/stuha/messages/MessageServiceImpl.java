@@ -26,15 +26,6 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> find10() {
         List<Message> messages = (List<Message>) messageRepository.findAll();
 
-        if (messages.isEmpty()) {
-            Message message = new Message();
-            message.setUserName("Stuha");
-            message.setFormatted("Tak tady snad ještě není ani jeden příspěvek! .. No pár slov by to chtělo ... Ale kdo se toho ujme?");
-            message.setCreatedOn(LocalDateTime.now());
-            message.setIconPath("0_0");
-            messages.add(message);
-        }
-
         return messages;
     }
 }

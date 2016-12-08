@@ -11,16 +11,17 @@ import java.util.List;
 class Message {
     @Id
     private String id;
+    private String replyTo;
 
-    private String userId;
+    private String conversationId;
+
     private String userName;
+    private String iconPath;
 
     private LocalDateTime createdOn;
 
     private String rough;
     private String formatted;
-
-    private String iconPath;
 
     @Transient
     private List<String> images = new ArrayList<>();
@@ -31,14 +32,6 @@ class Message {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 
     public String getUserName() {
@@ -87,5 +80,21 @@ class Message {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public String getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(String replyTo) {
+        this.replyTo = replyTo;
+    }
+
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
     }
 }
