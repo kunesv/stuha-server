@@ -5,10 +5,6 @@ import org.springframework.stereotype.Service;
 /**
  * Authentication functionality
  */
-@Service
-public class AuthenticationService {
-
-    public User authenticate(User userToCheck) {
-        return userToCheck;
-    }
+public interface AuthenticationService {
+    User authenticate(final LoginForm loginForm) throws LoginFailedException;
 }

@@ -1,7 +1,7 @@
 package net.stuha.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,9 +15,8 @@ public class LoginController {
     AuthenticationService authenticationService;
 
     @RequestMapping(value = "/login")
-    public User login(@RequestBody LoginForm loginForm) {
-
-        return new User();
+    public User login(@ModelAttribute final LoginForm loginForm) throws LoginFailedException {
+        return authenticationService.authenticate(loginForm);
     }
 
 }
