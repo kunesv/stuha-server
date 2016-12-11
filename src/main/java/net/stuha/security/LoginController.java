@@ -15,7 +15,9 @@ public class LoginController {
     AuthenticationService authenticationService;
 
     @RequestMapping(value = "/login")
-    public User login(@ModelAttribute final LoginForm loginForm) throws LoginFailedException {
+    public User login(@ModelAttribute final LoginForm loginForm) throws Exception {
+        Thread.sleep(2000);
+
         return authenticationService.authenticate(loginForm);
     }
 
