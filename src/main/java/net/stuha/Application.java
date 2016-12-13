@@ -1,6 +1,7 @@
 package net.stuha;
 
 import net.stuha.security.AuthorizationInterceptor;
+import net.stuha.security.TokenWriteInterceptor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,9 +26,15 @@ public class Application extends WebMvcConfigurerAdapter {
         return new AuthorizationInterceptor();
     }
 
+    @Bean
+    public TokenWriteInterceptor tokenWriteInterceptor() {
+        return new TokenWriteInterceptor();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor()).addPathPatterns("/**").excludePathPatterns("/login");
+        registry.addInterceptor(tokenWriteInterceptor());
     }
 
 }

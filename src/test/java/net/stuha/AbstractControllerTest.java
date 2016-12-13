@@ -15,10 +15,9 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 @ContextConfiguration(classes = Application.class)
 public class AbstractControllerTest {
+    protected MockMvc mockMvc;
     @Autowired
     private WebApplicationContext wac;
-
-    protected MockMvc mockMvc;
 
     @Before
     public void setUp() throws Exception {

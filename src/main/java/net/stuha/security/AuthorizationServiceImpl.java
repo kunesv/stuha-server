@@ -5,19 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Autowired
-    private TokenRepository tokenRepository;
+    private TokenService tokenService;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
-    public User authorize(HttpServletRequest request) throws UnauthorizedUserException {
+    public boolean authorize(HttpServletRequest request) throws UnauthorizedUserException {
         String userId = request.getParameter("userId");
         String token = request.getParameter("token");
 
@@ -25,21 +24,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new UnauthorizedUserException();
         }
 
-        return authorize(userId, token);
-    }
+        request.setAttribute("user", userService.validateUserId(userId));
+        request.setAttribute("token", tokenService.validateToken(token, userId));
 
-
-    public User authorize(String userId, String token) throws UnauthorizedUserException {
-        List<Token> tokens = tokenRepository.findByUserIdAndToken(userId, token);
-        if (tokens.isEmpty()) {
-            throw new UnauthorizedUserException();
-        }
-
-        User user = userRepository.findOne(tokens.get(0).getUserId());
-        if (user == null) {
-            throw new UnauthorizedUserException();
-        }
-
-        return user;
+        return true;
     }
 }

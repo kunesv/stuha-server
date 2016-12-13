@@ -1,6 +1,5 @@
 package net.stuha.notifications;
 
-import nl.martijndwars.webpush.Notification;
 import org.junit.Test;
 
 public class NotificationServiceTest {
