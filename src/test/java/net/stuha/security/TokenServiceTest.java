@@ -8,7 +8,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class TokenServiceImplTest {
+public class TokenServiceTest {
     @Autowired
     private TokenService tokenService;
 
