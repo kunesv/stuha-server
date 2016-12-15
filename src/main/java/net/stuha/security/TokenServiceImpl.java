@@ -5,8 +5,8 @@ import org.owasp.esapi.EncoderConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -15,11 +15,11 @@ public class TokenServiceImpl implements TokenService {
     private TokenRepository tokenRepository;
 
     @Override
-    public Token generateToken(String userId) throws NoSuchAlgorithmException {
+    public Token generateToken(String userId) {
         final Token token = new Token();
-
+        token.setId(UUID.randomUUID().toString());
         token.setUserId(userId);
-        token.setToken(newToken());
+        token.setToken(newTokenValue());
         token.setCreatedOn(LocalDateTime.now());
 
         return tokenRepository.save(token);
@@ -37,7 +37,7 @@ public class TokenServiceImpl implements TokenService {
                 throw new UnauthorizedUserException();
             }
 
-            tokenFound.setToken(newToken());
+            tokenFound.setToken(newTokenValue());
             tokenFound.setCreatedOn(LocalDateTime.now());
             tokenFound = tokenRepository.save(tokenFound);
         }
@@ -45,7 +45,7 @@ public class TokenServiceImpl implements TokenService {
         return tokenFound;
     }
 
-    public String newToken() {
+    private String newTokenValue() {
         return ESAPI.randomizer().getRandomString(128, EncoderConstants.CHAR_ALPHANUMERICS);
     }
 }

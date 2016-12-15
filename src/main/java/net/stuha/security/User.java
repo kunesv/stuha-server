@@ -1,7 +1,11 @@
 package net.stuha.security;
 
+import net.stuha.messages.Icon;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+import java.util.List;
 
 /**
  * User data
@@ -15,6 +19,9 @@ public class User {
     private String name;
 
     private String username;
+
+    @Transient
+    private List<Icon> icons;
 
     public String getId() {
         return id;
@@ -38,5 +45,13 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public List<Icon> getIcons() {
+        return icons;
+    }
+
+    public void setIcons(List<Icon> icons) {
+        this.icons = icons;
     }
 }

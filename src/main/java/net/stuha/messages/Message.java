@@ -16,6 +16,8 @@ class Message {
     private String conversationId;
 
     private String userName;
+    private String userId;
+
     private String iconPath;
 
     private LocalDateTime createdOn;
@@ -40,6 +42,14 @@ class Message {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public LocalDateTime getCreatedOn() {

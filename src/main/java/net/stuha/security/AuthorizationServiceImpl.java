@@ -17,15 +17,14 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public boolean authorize(HttpServletRequest request) throws UnauthorizedUserException {
-        String userId = request.getParameter("userId");
-        String token = request.getParameter("token");
+        final String userId = request.getHeader("userId");
+        final String token = request.getHeader("token");
 
         if (StringUtils.isBlank(userId) || StringUtils.isBlank(token)) {
             throw new UnauthorizedUserException();
         }
 
-        request.setAttribute("user", userService.validateUserId(userId));
-        request.setAttribute("token", tokenService.validateToken(token, userId));
+        request.setAttribute(GENUINE_USER_ID, userService.validateUserId(tokenService.validateToken(token, userId).getUserId()));
 
         return true;
     }
