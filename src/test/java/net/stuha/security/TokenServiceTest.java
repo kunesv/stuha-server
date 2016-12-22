@@ -16,7 +16,7 @@ public class TokenServiceTest {
 
     @Test
     public void newToken() throws Exception {
-        assertTrue(tokenService.generateToken("abc-123") != null);
+        assertTrue(tokenService.generateToken("abc-123", false) != null);
     }
 
 }

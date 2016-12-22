@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
             throw new LoginFailedException();
         }
 
-        return tokenService.generateToken(user.getId());
+        return tokenService.generateToken(user.getId(), loginForm.getRemember());
     }
 
     @Override

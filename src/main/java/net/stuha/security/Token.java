@@ -13,7 +13,7 @@ public class Token {
     private String token;
 
     private LocalDateTime createdOn;
-    private Boolean autoRevalidate;
+    private Boolean autoRevalidate = false;
 
 
     public String getId() {

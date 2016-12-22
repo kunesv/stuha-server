@@ -15,12 +15,13 @@ public class TokenServiceImpl implements TokenService {
     private TokenRepository tokenRepository;
 
     @Override
-    public Token generateToken(String userId) {
+    public Token generateToken(String userId, Boolean autoRevalidate) {
         final Token token = new Token();
         token.setId(UUID.randomUUID().toString());
         token.setUserId(userId);
         token.setToken(newTokenValue());
         token.setCreatedOn(LocalDateTime.now());
+        token.setAutoRevalidate(autoRevalidate);
 
         return tokenRepository.save(token);
     }

@@ -21,7 +21,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Thread.sleep(2500);
 
-        return authorizationService.authorize(request);
+        return authorizationService.authorize(request, response);
     }
 
     @Override

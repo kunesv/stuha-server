@@ -7,7 +7,7 @@ public class LoginForm {
 
     private String username;
     private String password;
-    private Boolean remember;
+    private Boolean remember = false;
 
     public String getUsername() {
         return username;

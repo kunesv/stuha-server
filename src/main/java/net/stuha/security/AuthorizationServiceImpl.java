@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
@@ -16,7 +17,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private UserService userService;
 
     @Override
-    public boolean authorize(HttpServletRequest request) throws UnauthorizedUserException {
+    public boolean authorize(HttpServletRequest request, HttpServletResponse response) throws UnauthorizedUserException {
         final String userId = request.getHeader("userId");
         final String token = request.getHeader("token");
 
@@ -24,7 +25,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new UnauthorizedUserException();
         }
 
-        request.setAttribute(GENUINE_USER_ID, userService.validateUserId(tokenService.validateToken(token, userId).getUserId()));
+        Token validToken = tokenService.validateToken(token, userId);
+        request.setAttribute(GENUINE_USER_ID, userService.validateUserId(validToken.getUserId()));
+        if (!StringUtils.equals(token, validToken.getToken())) {
+            response.setHeader("token", validToken.getToken());
+        }
 
         return true;
     }
