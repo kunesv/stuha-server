@@ -4,10 +4,7 @@ import net.stuha.security.AuthorizationService;
 import net.stuha.security.User;
 import net.stuha.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -25,8 +22,6 @@ public class MessageController {
 
     @RequestMapping(value = "/message", method = RequestMethod.POST)
     public Message add(@ModelAttribute final Message message, HttpServletRequest request) throws Exception {
-        Thread.sleep(someDelay());
-
         final User user = userService.getUserDetail((String) request.getAttribute(AuthorizationService.GENUINE_USER_ID));
 
         if (!isIconValid(message.getIconPath(), user)) {
@@ -43,10 +38,8 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.GET)
-    public List<Message> all() throws Exception {
-        Thread.sleep(someDelay());
-
-        return messageService.find10();
+    public List<Message> all(@RequestParam String conversationId, @RequestParam Long pageNo) throws Exception {
+        return messageService.find10(conversationId, pageNo);
     }
 
 
@@ -59,9 +52,5 @@ public class MessageController {
             }
         }
         return iconValid;
-    }
-
-    private int someDelay() {
-        return (int) (Math.random() * 3000);
     }
 }

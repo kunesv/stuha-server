@@ -19,8 +19,6 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public Token login(HttpServletRequest request, @ModelAttribute final LoginForm loginForm) throws Exception {
-        Thread.sleep(2000);
-
         return userService.validateUserLogin(loginForm);
     }
 

@@ -19,15 +19,15 @@ CREATE TABLE image (
 );
 
 CREATE TABLE message (
-  id              CHARACTER VARYING(36) NOT NULL,
-  conversation_id CHARACTER VARYING(36),
-  created_on      TIMESTAMP,
+  id              CHARACTER VARYING(36)  NOT NULL,
+  conversation_id CHARACTER VARYING(36)  NOT NULL,
+  created_on      TIMESTAMP              NOT NULL,
   formatted       TEXT,
   icon_path       CHARACTER VARYING(8),
   reply_to        CHARACTER VARYING(36),
   rough           TEXT,
-  user_id         CHARACTER VARYING(36),
-  user_name       CHARACTER VARYING(255)
+  user_id         CHARACTER VARYING(36)  NOT NULL,
+  user_name       CHARACTER VARYING(255) NOT NULL
 );
 
 CREATE TABLE token (
@@ -35,7 +35,7 @@ CREATE TABLE token (
   auto_revalidate BOOLEAN,
   created_on      TIMESTAMP,
   token           CHARACTER VARYING(255),
-  user_id         CHARACTER VARYING(36)
+  user_id         CHARACTER VARYING(36) NOT NULL
 );
 
 CREATE TABLE user_credentials (
@@ -48,6 +48,12 @@ CREATE TABLE users (
   id       CHARACTER VARYING(36) NOT NULL,
   name     CHARACTER VARYING(255),
   username CHARACTER VARYING(255)
+);
+
+CREATE TABLE user_conversation (
+  id              CHARACTER VARYING(36) NOT NULL,
+  user_id         CHARACTER VARYING(36) NOT NULL,
+  conversation_id CHARACTER VARYING(36) NOT NULL
 );
 
 ALTER TABLE ONLY conversation
@@ -70,3 +76,6 @@ ALTER TABLE ONLY user_credentials
 
 ALTER TABLE ONLY users
   ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY user_conversation
+  ADD CONSTRAINT user_conversation_pkey PRIMARY KEY (id);

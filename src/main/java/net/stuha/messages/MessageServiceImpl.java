@@ -3,7 +3,6 @@ package net.stuha.messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +22,8 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.save(message);
     }
 
-    public List<Message> find10() {
-        List<Message> messages = (List<Message>) messageRepository.findAll();
+    public List<Message> find10(String conversationId, Long pageNo) {
+        List<Message> messages = (List<Message>) messageRepository.findByConversationId(conversationId);
 
         return messages;
     }
