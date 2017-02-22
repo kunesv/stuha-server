@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.UUID;
 
 
 @RestController
@@ -16,7 +17,7 @@ public class UserController {
 
     @RequestMapping(value = "/currentUser", method = RequestMethod.GET)
     public User currentUser(HttpServletRequest request) {
-        String currentUserId = (String) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+        UUID currentUserId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         return userService.getUserDetail(currentUserId);
     }

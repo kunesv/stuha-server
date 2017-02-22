@@ -1,59 +1,59 @@
 CREATE TABLE conversation (
-  id    CHARACTER VARYING(36) NOT NULL,
+  id    UUID NOT NULL,
   title CHARACTER VARYING(255)
 );
 
 CREATE TABLE icon (
-  id      CHARACTER VARYING(36) NOT NULL,
+  id      UUID NOT NULL,
   alt     CHARACTER VARYING(4),
   path    CHARACTER VARYING(8),
-  user_id CHARACTER VARYING(36)
+  user_id UUID NOT NULL
 );
 
 CREATE TABLE image (
-  id         CHARACTER VARYING(36) NOT NULL,
-  image      BYTEA,
-  message_id CHARACTER VARYING(36),
-  name       CHARACTER VARYING(255),
-  thumbnail  BYTEA
+  id         UUID                   NOT NULL,
+  image      BYTEA                  NOT NULL,
+  message_id UUID                   NOT NULL,
+  name       CHARACTER VARYING(255) NOT NULL,
+  thumbnail  BYTEA                  NOT NULL
 );
 
 CREATE TABLE message (
-  id              CHARACTER VARYING(36)  NOT NULL,
-  conversation_id CHARACTER VARYING(36)  NOT NULL,
+  id              UUID                   NOT NULL,
+  conversation_id UUID                   NOT NULL,
   created_on      TIMESTAMP              NOT NULL,
   formatted       TEXT,
   icon_path       CHARACTER VARYING(8),
-  reply_to        CHARACTER VARYING(36),
+  reply_to        UUID,
   rough           TEXT,
-  user_id         CHARACTER VARYING(36)  NOT NULL,
+  user_id         UUID                   NOT NULL,
   user_name       CHARACTER VARYING(255) NOT NULL
 );
 
 CREATE TABLE token (
-  id              CHARACTER VARYING(36) NOT NULL,
+  id              UUID NOT NULL,
   auto_revalidate BOOLEAN,
   created_on      TIMESTAMP,
   token           CHARACTER VARYING(255),
-  user_id         CHARACTER VARYING(36) NOT NULL
+  user_id         UUID NOT NULL
 );
 
 CREATE TABLE user_credentials (
-  id       CHARACTER VARYING(36) NOT NULL,
+  id       UUID NOT NULL,
   password CHARACTER VARYING(255),
   username CHARACTER VARYING(255)
 );
 
 CREATE TABLE users (
-  id       CHARACTER VARYING(36) NOT NULL,
+  id       UUID NOT NULL,
   name     CHARACTER VARYING(255),
   username CHARACTER VARYING(255)
 );
 
 CREATE TABLE user_conversation (
-  id              CHARACTER VARYING(36) NOT NULL,
-  user_id         CHARACTER VARYING(36) NOT NULL,
-  conversation_id CHARACTER VARYING(36) NOT NULL
+  id              UUID NOT NULL,
+  user_id         UUID NOT NULL,
+  conversation_id UUID NOT NULL
 );
 
 ALTER TABLE ONLY conversation

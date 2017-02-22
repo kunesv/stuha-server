@@ -1,6 +1,5 @@
 package net.stuha.messages;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +14,9 @@ class ImageServiceImpl implements ImageService {
 
     @Override
     public Image add(Image image) {
-        image.setId(UUID.randomUUID().toString());
+        image.setId(UUID.randomUUID());
 
-        return (Image) imageRepository.save(image);
+        return imageRepository.save(image);
     }
 
     @Override
@@ -31,9 +30,9 @@ class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image find(String id) throws ImageNotFoundException {
+    public Image find(UUID id) throws ImageNotFoundException {
         for (Image image : imageRepository.findAll()) {
-            if (StringUtils.equals(id, image.getId())) {
+            if (id.equals(image.getId())) {
                 return image;
             }
         }
@@ -42,9 +41,9 @@ class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image thumbnail(String id) throws ImageNotFoundException {
+    public Image thumbnail(UUID id) throws ImageNotFoundException {
         for (Image image : imageRepository.findAll()) {
-            if (StringUtils.equals(id, image.getId())) {
+            if (id.equals(image.getId())) {
                 return image;
             }
         }

@@ -16,14 +16,16 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Override
     public Message add(Message message) {
-        message.setId(UUID.randomUUID().toString());
+        message.setId(UUID.randomUUID());
 
         return messageRepository.save(message);
     }
 
-    public List<Message> find10(String conversationId, Long pageNo) {
-        List<Message> messages = (List<Message>) messageRepository.findByConversationId(conversationId);
+    @Override
+    public List<Message> find10(UUID conversationId, Long pageNo) {
+        List<Message> messages = messageRepository.findByConversationId(conversationId);
 
         return messages;
     }

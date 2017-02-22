@@ -1,10 +1,12 @@
 package net.stuha.security;
 
 
+import java.util.UUID;
+
 public interface TokenService {
 
-    Token generateToken(String userId, Boolean autoRevalidate);
+    Token generateToken(UUID userId, Boolean autoRevalidate);
 
-    Token validateToken(String token, String userId) throws UnauthorizedUserException;
+    Token validateToken(String token, UUID userId) throws UnauthorizedUserException;
 
 }

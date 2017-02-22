@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * User data
@@ -14,7 +15,7 @@ import java.util.List;
 public class User {
 
     @Id
-    private String id;
+    private UUID id;
 
     private String name;
 
@@ -23,11 +24,11 @@ public class User {
     @Transient
     private List<Icon> icons;
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

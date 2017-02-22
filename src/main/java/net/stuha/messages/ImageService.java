@@ -1,6 +1,7 @@
 package net.stuha.messages;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ImageService {
 
@@ -8,7 +9,7 @@ public interface ImageService {
 
     void addAll(List<Image> images, Message message);
 
-    Image find(String id) throws ImageNotFoundException;
+    Image find(UUID id) throws ImageNotFoundException;
 
-    Image thumbnail(String id) throws ImageNotFoundException;
+    Image thumbnail(UUID id) throws ImageNotFoundException;
 }

@@ -3,32 +3,33 @@ package net.stuha.security;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 public class Token {
     @Id
-    private String id;
+    private UUID id;
 
-    private String userId;
+    private UUID userId;
     private String token;
 
     private LocalDateTime createdOn;
     private Boolean autoRevalidate = false;
 
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 

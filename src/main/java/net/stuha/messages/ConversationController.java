@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class ConversationController {
@@ -17,7 +18,7 @@ public class ConversationController {
     private ConversationService conversationService;
 
     @RequestMapping(value = "/userConversations", method = RequestMethod.GET)
-    public List<Conversation> userConversations(@RequestAttribute(AuthorizationService.GENUINE_USER_ID) String userId) {
+    public List<Conversation> userConversations(@RequestAttribute(AuthorizationService.GENUINE_USER_ID) UUID userId) {
         return conversationService.userConversations(userId);
     }
 }

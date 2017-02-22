@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class MessageController {
@@ -22,7 +23,7 @@ public class MessageController {
 
     @RequestMapping(value = "/message", method = RequestMethod.POST)
     public Message add(@ModelAttribute final Message message, HttpServletRequest request) throws Exception {
-        final User user = userService.getUserDetail((String) request.getAttribute(AuthorizationService.GENUINE_USER_ID));
+        final User user = userService.getUserDetail((UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID));
 
         if (!isIconValid(message.getIconPath(), user)) {
             throw new InvalidMessageFormatException();
@@ -38,7 +39,7 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.GET)
-    public List<Message> all(@RequestParam String conversationId, @RequestParam Long pageNo) throws Exception {
+    public List<Message> all(@RequestParam UUID conversationId, @RequestParam Long pageNo) throws Exception {
         return messageService.find10(conversationId, pageNo);
     }
 

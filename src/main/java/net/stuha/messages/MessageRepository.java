@@ -5,9 +5,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface MessageRepository extends CrudRepository<Message, String> {
+public interface MessageRepository extends CrudRepository<Message, UUID> {
 
     @Query("SELECT m FROM Message m where m.conversationId = :conversationId")
-    List<Message> findByConversationId(@Param("conversationId") String conversationId);
+    List<Message> findByConversationId(@Param("conversationId") UUID conversationId);
 }

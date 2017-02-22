@@ -5,6 +5,8 @@ import net.stuha.messages.IconRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -21,8 +23,8 @@ public class UserServiceImpl implements UserService {
     private TokenService tokenService;
 
     @Override
-    public String validateUserId(String userId) throws UnauthorizedUserException {
-        final User user = userRepository.findOne(userId);
+    public UUID validateUserId(UUID id) throws UnauthorizedUserException {
+        final User user = userRepository.findOne(id);
         if (user == null) {
             throw new UnauthorizedUserException();
         }
@@ -45,7 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserDetail(String userId) {
+    public User getUserDetail(UUID userId) {
         final User user = userRepository.findOne(userId);
         user.setIcons(iconRepository.findByUserId(userId));
 

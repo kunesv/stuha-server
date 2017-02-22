@@ -2,32 +2,33 @@ package net.stuha.messages;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.UUID;
 
 @Entity
 class Image {
     @Id
-    private String id;
+    private UUID id;
 
-    private String messageId;
+    private UUID messageId;
 
     private String name;
 
     private byte[] thumbnail;
     private byte[] image;
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getMessageId() {
+    public UUID getMessageId() {
         return messageId;
     }
 
-    public void setMessageId(String messageId) {
+    public void setMessageId(UUID messageId) {
         this.messageId = messageId;
     }
 

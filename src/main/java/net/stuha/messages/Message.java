@@ -6,17 +6,18 @@ import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 class Message {
     @Id
-    private String id;
-    private String replyTo;
+    private UUID id;
+    private UUID replyTo;
 
-    private String conversationId;
+    private UUID conversationId;
 
     private String userName;
-    private String userId;
+    private UUID userId;
 
     private String iconPath;
 
@@ -28,11 +29,11 @@ class Message {
     @Transient
     private List<String> images = new ArrayList<>();
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -44,11 +45,11 @@ class Message {
         this.userName = userName;
     }
 
-    public String getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
@@ -92,19 +93,19 @@ class Message {
         this.images = images;
     }
 
-    public String getReplyTo() {
+    public UUID getReplyTo() {
         return replyTo;
     }
 
-    public void setReplyTo(String replyTo) {
+    public void setReplyTo(UUID replyTo) {
         this.replyTo = replyTo;
     }
 
-    public String getConversationId() {
+    public UUID getConversationId() {
         return conversationId;
     }
 
-    public void setConversationId(String conversationId) {
+    public void setConversationId(UUID conversationId) {
         this.conversationId = conversationId;
     }
 }

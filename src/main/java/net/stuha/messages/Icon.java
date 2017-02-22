@@ -2,23 +2,24 @@ package net.stuha.messages;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.UUID;
 
 
 @Entity
 public class Icon {
     @Id
-    private String id;
+    private UUID id;
 
     private String path;
     private String alt;
 
-    private String userId;
+    private UUID userId;
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -38,11 +39,11 @@ public class Icon {
         this.alt = alt;
     }
 
-    public String getUserId() {
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 }

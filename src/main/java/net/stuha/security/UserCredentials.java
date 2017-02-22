@@ -2,6 +2,7 @@ package net.stuha.security;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.UUID;
 
 /**
  * To be implemented elsewhere
@@ -9,17 +10,17 @@ import javax.persistence.Id;
 @Entity
 public class UserCredentials {
     @Id
-    private String id;
+    private UUID id;
 
     private String username;
 
     private String password;
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

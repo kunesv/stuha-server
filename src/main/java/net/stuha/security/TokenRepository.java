@@ -3,6 +3,8 @@ package net.stuha.security;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface TokenRepository extends CrudRepository<Token, String> {
-    Token findByUserIdAndToken(String userId, String token);
+import java.util.UUID;
+
+public interface TokenRepository extends CrudRepository<Token, UUID> {
+    Token findByUserIdAndToken(UUID userId, String token);
 }

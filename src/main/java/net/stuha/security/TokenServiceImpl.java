@@ -15,9 +15,9 @@ public class TokenServiceImpl implements TokenService {
     private TokenRepository tokenRepository;
 
     @Override
-    public Token generateToken(String userId, Boolean autoRevalidate) {
+    public Token generateToken(UUID userId, Boolean autoRevalidate) {
         final Token token = new Token();
-        token.setId(UUID.randomUUID().toString());
+        token.setId(UUID.randomUUID());
         token.setUserId(userId);
         token.setToken(newTokenValue());
         token.setCreatedOn(LocalDateTime.now());
@@ -27,7 +27,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token validateToken(String token, String userId) throws UnauthorizedUserException {
+    public Token validateToken(String token, UUID userId) throws UnauthorizedUserException {
         Token tokenFound = tokenRepository.findByUserIdAndToken(userId, token);
         if (tokenFound == null) {
             throw new UnauthorizedUserException();

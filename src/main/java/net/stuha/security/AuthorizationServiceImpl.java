@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
@@ -18,10 +19,15 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public boolean authorize(HttpServletRequest request, HttpServletResponse response) throws UnauthorizedUserException {
-        final String userId = request.getHeader("userId");
-        final String token = request.getHeader("token");
+        final UUID userId;
+        try {
+            userId = UUID.fromString(request.getHeader("userId"));
+        } catch (IllegalArgumentException iae) {
+            throw new UnauthorizedUserException();
+        }
 
-        if (StringUtils.isBlank(userId) || StringUtils.isBlank(token)) {
+        final String token = request.getHeader("token");
+        if (StringUtils.isBlank(token)) {
             throw new UnauthorizedUserException();
         }
 

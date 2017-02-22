@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class ImageController {
@@ -24,14 +24,14 @@ public class ImageController {
     }
 
     @RequestMapping(value = "/image/{id}", method = RequestMethod.GET)
-    public Image find(@PathVariable String id) throws ImageNotFoundException, InterruptedException {
+    public Image find(@PathVariable UUID id) throws ImageNotFoundException, InterruptedException {
         Thread.sleep(1000);
 
         return imageService.find(id);
     }
 
     @RequestMapping(value = "/thumbnail/{id}", method = RequestMethod.GET)
-    public Image thumbnail(@PathVariable String id) throws ImageNotFoundException, InterruptedException {
+    public Image thumbnail(@PathVariable UUID id) throws ImageNotFoundException, InterruptedException {
         Thread.sleep(1000);
 
         return imageService.thumbnail(id);

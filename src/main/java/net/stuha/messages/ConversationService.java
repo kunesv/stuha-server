@@ -1,7 +1,8 @@
 package net.stuha.messages;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ConversationService {
-    List<Conversation> userConversations(String userId);
+    List<Conversation> userConversations(UUID userId);
 }

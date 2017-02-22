@@ -2,12 +2,13 @@ package net.stuha.security;
 
 
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 public interface UserService {
 
-    String validateUserId(String userId) throws UnauthorizedUserException;
+    UUID validateUserId(UUID userId) throws UnauthorizedUserException;
 
     Token validateUserLogin(LoginForm loginForm) throws LoginFailedException, NoSuchAlgorithmException;
 
-    User getUserDetail(String userId);
+    User getUserDetail(UUID userId);
 }
