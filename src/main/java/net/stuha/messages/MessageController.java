@@ -30,9 +30,8 @@ public class MessageController {
         }
 
         message.setUserName(user.getName());
-        message.setUserId(user.getId());
         message.setCreatedOn(LocalDateTime.now());
-        // FIXME: Validate
+        // FIXME: Some input validation, no?
         message.setFormatted(message.getRough());
 
         return messageService.add(message);

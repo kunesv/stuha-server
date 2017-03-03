@@ -16,4 +16,9 @@ public class ConversationServiceImpl implements ConversationService {
     public List<Conversation> userConversations(UUID userId) {
         return conversationRepository.findConversationsByUserId(userId);
     }
+
+    @Override
+    public Boolean userHasConversation(UUID conversationId, UUID userId) {
+        return conversationRepository.findConversationByIdAndUserId(conversationId, userId) > 0;
+    }
 }
