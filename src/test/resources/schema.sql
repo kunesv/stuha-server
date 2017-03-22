@@ -32,6 +32,7 @@ CREATE TABLE message (
   rough           TEXT,
   user_name       VARCHAR(255) NOT NULL
 );
+CREATE INDEX ON message (conversation_id, id);
 
 CREATE TABLE image (
   id         UUID PRIMARY KEY,

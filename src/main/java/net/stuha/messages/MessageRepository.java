@@ -10,5 +10,7 @@ import java.util.UUID;
 public interface MessageRepository extends CrudRepository<Message, UUID> {
 
     @Query("SELECT m FROM Message m where m.conversationId = :conversationId")
-    List<Message> findByConversationId(@Param("conversationId") UUID conversationId);
+    List<Message> findFirst10ByConversationId(@Param("conversationId") UUID conversationId);
+
+    List<Message> findFirst1ByConversationIdAndId(UUID conversationId, UUID messageId);
 }

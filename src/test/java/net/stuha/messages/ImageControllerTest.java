@@ -1,12 +1,12 @@
 package net.stuha.messages;
 
-import net.stuha.AbstractControllerTest;
+import net.stuha.AbstractTest;
 import org.junit.Test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ImageControllerTest extends AbstractControllerTest {
+public class ImageControllerTest extends AbstractTest {
 
     @Test
     public void find() throws Exception {

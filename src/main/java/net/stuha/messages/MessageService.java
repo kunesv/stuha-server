@@ -6,5 +6,9 @@ import java.util.UUID;
 public interface MessageService {
     Message add(Message message);
 
+    List<MessageReplyTo> checkReplyTos(List<MessageReplyTo> messageReplyTos, UUID conversationId);
+
     List<Message> find10(UUID conversationId, Long pageNo);
+
+    Message findOne(UUID messageId, UUID conversationId);
 }

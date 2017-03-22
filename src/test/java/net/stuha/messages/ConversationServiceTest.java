@@ -1,6 +1,6 @@
 package net.stuha.messages;
 
-import net.stuha.AbstractControllerTest;
+import net.stuha.AbstractTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertTrue;
 
-public class ConversationServiceTest extends AbstractControllerTest {
+public class ConversationServiceTest extends AbstractTest {
 
     @Autowired
     private ConversationService conversationService;

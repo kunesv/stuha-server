@@ -1,5 +1,7 @@
 package net.stuha.messages;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -12,7 +14,6 @@ import java.util.UUID;
 class Message {
     @Id
     private UUID id;
-    private UUID replyTo;
 
     private UUID conversationId;
 
@@ -23,6 +24,8 @@ class Message {
     private LocalDateTime createdOn;
 
     private String rough;
+
+    @JsonRawValue
     private String formatted;
 
     @Transient
@@ -84,14 +87,6 @@ class Message {
         this.images = images;
     }
 
-    public UUID getReplyTo() {
-        return replyTo;
-    }
-
-    public void setReplyTo(UUID replyTo) {
-        this.replyTo = replyTo;
-    }
-
     public UUID getConversationId() {
         return conversationId;
     }
@@ -99,4 +94,6 @@ class Message {
     public void setConversationId(UUID conversationId) {
         this.conversationId = conversationId;
     }
+
+
 }

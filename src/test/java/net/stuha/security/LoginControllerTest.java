@@ -1,13 +1,13 @@
 package net.stuha.security;
 
-import net.stuha.AbstractControllerTest;
+import net.stuha.AbstractTest;
 import org.junit.Test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class LoginControllerTest extends AbstractControllerTest {
+public class LoginControllerTest extends AbstractTest {
 
     @Test
     public void login() throws Exception {
