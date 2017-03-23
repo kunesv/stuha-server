@@ -32,7 +32,7 @@ public class MessageServiceImpl implements MessageService {
             final Message message = findOne(UUID.fromString(messageReplyTo.getReplyToId()), conversationId);
             if (message != null) {
                 messageReplyTo.setIconPath(message.getIconPath());
-                messageReplyTo.setCaption(message.getRough());
+                messageReplyTo.setCaptionFromFormatted(message.getFormatted());
                 results.add(messageReplyTo);
             }
         }
@@ -41,8 +41,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Message> find10(UUID conversationId, Long pageNo) {
-
-        return messageRepository.findFirst10ByConversationId(conversationId);
+        return messageRepository.findFirst10ByConversationIdOrderByCreatedOnDesc(conversationId);
     }
 
     @Override

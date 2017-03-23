@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.stuha.messages.MessageReplyTo;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +16,12 @@ public class FormattedText {
 
     private List<List<TextNode>> paragraphs;
 
+    public FormattedText() {
+    }
+
     public FormattedText(String rough, List<MessageReplyTo> messageReplyTos) {
+        messageReplyTos.sort(Comparator.comparingInt(mrt -> -mrt.getKey().length()));
+
         paragraphs = Arrays.stream(rough.split(PARAGRAPH_SEPARATOR))
                 .map(parseParagraphs())
                 .map(parseLinks())
@@ -50,44 +52,48 @@ public class FormattedText {
     }
 
     private Function<List<TextNode>, List<TextNode>> parseLinks() {
-        return paragraph -> paragraph.stream().map(node -> {
-            List<TextNode> nodes = new ArrayList<>();
-            if (node instanceof RoughText) {
-                paragraph.indexOf(node);
+        return inNodes -> {
+            Optional<List<TextNode>> outNodes = inNodes.stream().map(node -> {
+                List<TextNode> nodes = new ArrayList<>();
+                if (node instanceof RoughText) {
+                    inNodes.indexOf(node);
 
-                String text = ((RoughText) node).getText();
+                    String text = ((RoughText) node).getText();
 
-                Pattern linkPattern = Pattern.compile(URL_PATTERN);
-                Matcher linkMatcher = linkPattern.matcher(text);
+                    Pattern linkPattern = Pattern.compile(URL_PATTERN);
+                    Matcher linkMatcher = linkPattern.matcher(text);
 
-                int lastMatchEnd = 0;
+                    int lastMatchEnd = 0;
 
-                while (linkMatcher.find()) {
-                    if (linkMatcher.start() > lastMatchEnd) {
-                        nodes.add(new RoughText(text.substring(lastMatchEnd, linkMatcher.start())));
+                    while (linkMatcher.find()) {
+                        if (linkMatcher.start() > lastMatchEnd) {
+                            nodes.add(new RoughText(text.substring(lastMatchEnd, linkMatcher.start())));
+                        }
+                        nodes.add(new Link(linkMatcher.group(), linkMatcher.group(1)));
+
+                        lastMatchEnd = linkMatcher.end();
                     }
-                    nodes.add(new Link(linkMatcher.group(), linkMatcher.group(1)));
 
-                    lastMatchEnd = linkMatcher.end();
+                    if (lastMatchEnd < text.length()) {
+                        nodes.add(new RoughText(text.substring(lastMatchEnd)));
+                    }
+                } else {
+                    nodes.add(node);
                 }
+                return nodes;
+            }).reduce((textNodes, textNodes2) -> {
+                textNodes.addAll(textNodes2);
+                return textNodes;
+            });
 
-                if (lastMatchEnd != text.length() - 1) {
-                    nodes.add(new RoughText(text.substring(lastMatchEnd)));
-                }
-            } else {
-                nodes.add(node);
-            }
-            return nodes;
-        }).reduce((textNodes, textNodes2) -> {
-            textNodes.addAll(textNodes2);
-            return textNodes;
-        }).get();
+            return outNodes.orElse(inNodes);
+        };
     }
 
     private Function<List<TextNode>, List<TextNode>> parseReplyTos(List<MessageReplyTo> messageReplyTos) {
-        return paragraph -> {
+        return inNodes -> {
             for (MessageReplyTo messageReplyTo : messageReplyTos) {
-                paragraph = paragraph.stream().map(node -> {
+                Optional<List<TextNode>> outNodes = inNodes.stream().map(node -> {
                     List<TextNode> nodes = new ArrayList<>();
                     if (node instanceof RoughText) {
                         String text = ((RoughText) node).getText();
@@ -105,7 +111,7 @@ public class FormattedText {
                             lastIndex = index + messageReplyTo.getKey().length();
                         }
 
-                        if (lastIndex != text.length() - 1) {
+                        if (lastIndex < text.length()) {
                             nodes.add(new RoughText(text.substring(lastIndex)));
                         }
                     } else {
@@ -116,9 +122,13 @@ public class FormattedText {
                 }).reduce((textNodes, textNodes2) -> {
                     textNodes.addAll(textNodes2);
                     return textNodes;
-                }).get();
+                });
+
+                if (outNodes.isPresent()) {
+                    inNodes = outNodes.get();
+                }
             }
-            return paragraph;
+            return inNodes;
         };
     }
 

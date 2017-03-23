@@ -1,5 +1,14 @@
 package net.stuha.messages;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.stuha.messages.formattedText.FormattedText;
+import net.stuha.messages.formattedText.PlainText;
+import net.stuha.messages.formattedText.TextNode;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
 public class MessageReplyTo {
     private String replyToId;
     private String key;
@@ -37,5 +46,35 @@ public class MessageReplyTo {
 
     public void setCaption(String caption) {
         this.caption = caption;
+    }
+
+    public void setCaptionFromFormatted(String formatted) {
+        try {
+            FormattedText formattedText = new ObjectMapper().readValue(formatted, FormattedText.class);
+
+            Optional<List<TextNode>> nodes = formattedText.getParagraphs().stream()
+                    .reduce((textNodes, textNodes2) -> {
+                        textNodes.addAll(textNodes2);
+                        return textNodes;
+                    });
+            if (nodes.isPresent()) {
+                Optional<String> plainText = nodes.get().stream()
+                        .filter(textNode -> textNode instanceof PlainText)
+                        .map((textNode) -> ((PlainText) textNode).getText())
+                        .reduce((s, s2) -> String.format("%s .. %s", s, s2));
+
+                if (plainText.isPresent()) {
+                    caption = plainText.get().trim();
+
+                    if (caption.length() > 28) {
+                        caption = caption.substring(0, 28) + "...";
+                    }
+                }
+            }
+
+
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Wrongly formatted message.", e);
+        }
     }
 }
