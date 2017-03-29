@@ -50,5 +50,8 @@ public class MessageServiceImpl implements MessageService {
         return (messages.size() > 0) ? messages.get(0) : null;
     }
 
-
+    @Override
+    public Message findOne(UUID messageId) {
+        return messageRepository.findOne(messageId);
+    }
 }

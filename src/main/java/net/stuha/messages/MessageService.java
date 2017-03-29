@@ -11,4 +11,6 @@ public interface MessageService {
     List<Message> find10(UUID conversationId, Long pageNo);
 
     Message findOne(UUID messageId, UUID conversationId);
+
+    Message findOne(UUID messageId);
 }

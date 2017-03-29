@@ -53,7 +53,7 @@ public class MessageController {
         return messageService.add(message);
     }
 
-    @RequestMapping(value = "/message", method = RequestMethod.GET)
+    @RequestMapping(value = "/messages", method = RequestMethod.GET)
     public List<Message> all(@RequestParam UUID conversationId, @RequestParam Long pageNo, HttpServletRequest request) throws Exception {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
@@ -62,6 +62,18 @@ public class MessageController {
         }
 
         return messageService.find10(conversationId, pageNo);
+    }
+
+    @RequestMapping(value = "/message", method = RequestMethod.GET)
+    public Message one(@RequestParam UUID messageId, HttpServletRequest request) throws UnauthorizedUserException {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+        Message message = messageService.findOne(messageId);
+
+        if (!conversationService.userHasConversation(message.getConversationId(), userId)) {
+            throw new UnauthorizedUserException();
+        }
+
+        return message;
     }
 
     private boolean validIcon(final String iconPath, final User user) {

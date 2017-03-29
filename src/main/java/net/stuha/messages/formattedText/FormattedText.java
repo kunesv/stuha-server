@@ -133,16 +133,16 @@ public class FormattedText {
     }
 
     private Function<List<TextNode>, List<TextNode>> parseRemainingText() {
-        return paragraph -> {
-            List<TextNode> nodes = new ArrayList<>();
-            for (TextNode node : paragraph) {
+        return inNodes -> {
+            List<TextNode> outNodes = new ArrayList<>();
+            for (TextNode node : inNodes) {
                 if (node instanceof RoughText) {
-                    nodes.add(new PlainText(((RoughText) node).getText()));
+                    outNodes.add(new PlainText(((RoughText) node).getText()));
                 } else {
-                    nodes.add(node);
+                    outNodes.add(node);
                 }
             }
-            return nodes;
+            return outNodes;
         };
     }
 }
