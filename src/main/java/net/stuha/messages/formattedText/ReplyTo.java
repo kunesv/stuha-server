@@ -2,21 +2,23 @@ package net.stuha.messages.formattedText;
 
 import net.stuha.messages.MessageReplyTo;
 
-public class ReplyTo implements TextNode {
+public class ReplyTo extends TextNode {
     private String replyToId;
     private String iconPath;
     private String caption;
 
-    public ReplyTo() {
+    ReplyTo() {
+        this.nodeType = NodeType.REPLY_TO;
     }
 
-    public ReplyTo(String replyToId, String iconPath, String caption) {
+    ReplyTo(String replyToId, String iconPath, String caption) {
+        this();
         this.replyToId = replyToId;
         this.iconPath = iconPath;
         this.caption = caption;
     }
 
-    public ReplyTo(MessageReplyTo messageReplyTo) {
+    ReplyTo(MessageReplyTo messageReplyTo) {
         this(messageReplyTo.getReplyToId(), messageReplyTo.getIconPath(), messageReplyTo.getCaption());
     }
 

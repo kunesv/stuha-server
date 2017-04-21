@@ -18,7 +18,7 @@ public class FormattedTextTest {
         MessageReplyTo messageReply = new MessageReplyTo();
         messageReply.setReplyToId("111111-1111-1111-1111-111111111111");
         messageReply.setKey("@Test User");
-        messageReply.setCaptionFromFormatted("{\"paragraphs\":[[{\"type\":\"PLAIN_TEXT\",\"text\":\"Hi \"},{\"type\":\"REPLY_TO\",\"replyToId\":\"33333333-3333-3333-3333-333333333333\",\"iconPath\":\"2_1\",\"caption\":\"Something very interresting Here ...\"},{\"type\":\"PLAIN_TEXT\",\"text\":\", how are you Today?\"}]]}");
+        messageReply.setCaptionFromFormatted("{\"textNodes\":[{\"type\":\"PLAIN_TEXT\",\"text\":\"Hi \"},{\"type\":\"REPLY_TO\",\"replyToId\":\"33333333-3333-3333-3333-333333333333\",\"iconPath\":\"2_1\",\"caption\":\"Something very interresting Here ...\"},{\"type\":\"PLAIN_TEXT\",\"text\":\", how are you Today?\"}]}");
         messageReplyTos.add(messageReply);
 
         MessageReplyTo messageReply2 = new MessageReplyTo();
@@ -28,9 +28,7 @@ public class FormattedTextTest {
 
         FormattedText formattedText = new FormattedText(rough, messageReplyTos);
 
-        Assert.assertTrue(formattedText.getParagraphs().size() == 2);
-        Assert.assertTrue(formattedText.getParagraphs().get(0).size() == 3);
-        Assert.assertTrue(formattedText.getParagraphs().get(1).size() == 5);
+        Assert.assertTrue(formattedText.getTextNodes().size() == 9);
     }
 
 

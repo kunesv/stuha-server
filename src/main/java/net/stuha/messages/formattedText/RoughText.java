@@ -1,9 +1,14 @@
 package net.stuha.messages.formattedText;
 
-public class RoughText implements TextNode {
+public class RoughText extends TextNode {
     private String text;
 
-    public RoughText(String text) {
+    RoughText() {
+        this.nodeType = NodeType.ROUGH;
+    }
+
+    RoughText(String text) {
+        this();
         this.text = text;
     }
 

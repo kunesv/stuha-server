@@ -1,13 +1,12 @@
 package net.stuha.messages.formattedText;
 
-public class Link implements TextNode {
+public class Link extends TextNode {
     private String url;
     private String label;
 
-    public Link() {
-    }
 
-    public Link(String url, String label) {
+    Link(String url, String label) {
+        this.nodeType = NodeType.LINK;
         this.url = url;
         this.label = label;
     }

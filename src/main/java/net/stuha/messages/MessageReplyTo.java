@@ -3,10 +3,8 @@ package net.stuha.messages;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.stuha.messages.formattedText.FormattedText;
 import net.stuha.messages.formattedText.PlainText;
-import net.stuha.messages.formattedText.TextNode;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 public class MessageReplyTo {
@@ -52,23 +50,16 @@ public class MessageReplyTo {
         try {
             FormattedText formattedText = new ObjectMapper().readValue(formatted, FormattedText.class);
 
-            Optional<List<TextNode>> nodes = formattedText.getParagraphs().stream()
-                    .reduce((textNodes, textNodes2) -> {
-                        textNodes.addAll(textNodes2);
-                        return textNodes;
-                    });
-            if (nodes.isPresent()) {
-                Optional<String> plainText = nodes.get().stream()
-                        .filter(textNode -> textNode instanceof PlainText)
-                        .map((textNode) -> ((PlainText) textNode).getText())
-                        .reduce((s, s2) -> String.format("%s .. %s", s, s2));
+            Optional<String> plainText = formattedText.getTextNodes().stream()
+                    .filter(textNode -> textNode instanceof PlainText)
+                    .map((textNode) -> ((PlainText) textNode).getText())
+                    .reduce((s, s2) -> String.format("%s .. %s", s, s2));
 
-                if (plainText.isPresent()) {
-                    caption = plainText.get().trim();
+            if (plainText.isPresent()) {
+                caption = plainText.get().trim();
 
-                    if (caption.length() > 28) {
-                        caption = caption.substring(0, 28) + "...";
-                    }
+                if (caption.length() > 28) {
+                    caption = caption.substring(0, 28) + "...";
                 }
             }
 

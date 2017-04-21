@@ -7,7 +7,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "PLAIN_TEXT", value = PlainText.class),
         @JsonSubTypes.Type(name = "LINK", value = Link.class),
-        @JsonSubTypes.Type(name = "REPLY_TO", value = ReplyTo.class)
+        @JsonSubTypes.Type(name = "REPLY_TO", value = ReplyTo.class),
+        @JsonSubTypes.Type(name = "NEW_LINE", value = NewLine.class)
 })
-public interface TextNode {
+public abstract class TextNode {
+    enum NodeType {
+        PLAIN_TEXT, LINK, REPLY_TO, NEW_LINE, ROUGH
+    }
+
+    NodeType nodeType;
 }

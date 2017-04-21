@@ -1,14 +1,15 @@
 package net.stuha.messages.formattedText;
 
-public class PlainText implements TextNode {
+public class PlainText extends TextNode {
     private String text;
 
-    public PlainText() {
+    PlainText() {
+        this.nodeType = NodeType.PLAIN_TEXT;
     }
 
-    public PlainText(String rough) {
+    PlainText(String text) {
         this();
-        text = rough;
+        this.text = text;
     }
 
     public String getText() {
