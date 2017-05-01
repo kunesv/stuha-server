@@ -4,9 +4,12 @@ public class Link extends TextNode {
     private String url;
     private String label;
 
+    public Link() {
+        this.nodeType = NodeType.LINK;
+    }
 
     Link(String url, String label) {
-        this.nodeType = NodeType.LINK;
+        this();
         this.url = url;
         this.label = label;
     }
