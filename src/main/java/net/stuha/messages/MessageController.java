@@ -61,7 +61,7 @@ public class MessageController {
             throw new UnauthorizedUserException();
         }
 
-        return messageService.find10(conversationId, pageNo);
+        return messageService.find10(conversationId, userId, pageNo);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.GET)

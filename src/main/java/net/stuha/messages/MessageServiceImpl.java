@@ -1,5 +1,7 @@
 package net.stuha.messages;
 
+import net.stuha.notifications.LastVisit;
+import net.stuha.notifications.LastVisitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,10 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private MessageRepository messageRepository;
+
+    @Autowired
+    private LastVisitRepository lastVisitRepository;
+
 
     @Override
     public Message add(Message message) {
@@ -40,7 +46,9 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> find10(UUID conversationId, Long pageNo) {
+    public List<Message> find10(UUID conversationId, UUID userId, Long pageNo) {
+        LastVisit lastVisit = lastVisitRepository.findFirstByUserIdAndConversationId(userId, conversationId);
+
         return messageRepository.findFirst10ByConversationIdOrderByCreatedOnDesc(conversationId);
     }
 

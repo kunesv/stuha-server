@@ -8,7 +8,7 @@ public interface MessageService {
 
     List<MessageReplyTo> checkReplyTos(List<MessageReplyTo> messageReplyTos, UUID conversationId);
 
-    List<Message> find10(UUID conversationId, Long pageNo);
+    List<Message> find10(UUID conversationId, UUID userId, Long pageNo);
 
     Message findOne(UUID messageId, UUID conversationId);
 

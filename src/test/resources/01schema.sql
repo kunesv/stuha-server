@@ -32,7 +32,7 @@ CREATE TABLE message (
   rough           TEXT,
   user_name       VARCHAR(255) NOT NULL
 );
-CREATE INDEX ON message (conversation_id, id);
+CREATE INDEX ON message (conversation_id, created_on);
 
 CREATE TABLE image (
   id         UUID PRIMARY KEY,
@@ -56,3 +56,18 @@ CREATE TABLE user_conversation (
   user_id         UUID REFERENCES users (id),
   conversation_id UUID REFERENCES conversation (id)
 );
+
+CREATE TABLE message_reply (
+  id          UUID PRIMARY KEY,
+  message_id  UUID REFERENCES message (id),
+  reply_to_id UUID REFERENCES message (id),
+  key         VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE last_visit (
+  id              UUID PRIMARY KEY,
+  user_id         UUID REFERENCES users (id),
+  conversation_id UUID REFERENCES conversation (id),
+  last_visit_on   TIMESTAMP NOT NULL
+);
+CREATE UNIQUE INDEX ON last_visit (user_id, conversation_id);

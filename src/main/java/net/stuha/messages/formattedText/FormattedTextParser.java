@@ -1,6 +1,7 @@
 package net.stuha.messages.formattedText;
 
 import net.stuha.messages.MessageReplyTo;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -132,10 +133,12 @@ class FormattedTextParser {
     private static Function<TextNode, TextNode> parseRemainingText() {
         return node -> {
             if (TextNode.NodeType.ROUGH == node.nodeType) {
-                return new PlainText(((RoughText) node).getText());
-            } else {
-                return node;
+                String text = ((RoughText) node).getText();
+                if (StringUtils.isNotBlank(text)) {
+                    return new PlainText(text);
+                }
             }
+            return node;
         };
     }
 }
