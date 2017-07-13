@@ -5,6 +5,7 @@ import net.stuha.notifications.LastVisitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -48,6 +49,20 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Message> find10(UUID conversationId, UUID userId, Long pageNo) {
         LastVisit lastVisit = lastVisitRepository.findFirstByUserIdAndConversationId(userId, conversationId);
+
+        if (lastVisit != null) {
+            long unreadCount = messageRepository.countAllByConversationIdAndCreatedOnAfter(conversationId, lastVisit.getLastVisitOn());
+            // TODO:
+            System.out.println(unreadCount);
+        } else {
+            lastVisit = new LastVisit();
+            lastVisit.setId(UUID.randomUUID());
+            lastVisit.setConversationId(conversationId);
+            lastVisit.setUserId(userId);
+        }
+
+        lastVisit.setLastVisitOn(LocalDateTime.now());
+        lastVisitRepository.save(lastVisit);
 
         return messageRepository.findFirst10ByConversationIdOrderByCreatedOnDesc(conversationId);
     }

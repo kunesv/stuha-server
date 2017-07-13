@@ -2,6 +2,7 @@ package net.stuha.notifications;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -12,6 +13,8 @@ public class LastVisit {
     private UUID conversationId;
 
     private UUID userId;
+
+    private LocalDateTime lastVisitOn;
 
     public UUID getId() {
         return id;
@@ -35,5 +38,13 @@ public class LastVisit {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
+    }
+
+    public LocalDateTime getLastVisitOn() {
+        return lastVisitOn;
+    }
+
+    public void setLastVisitOn(LocalDateTime lastVisitOn) {
+        this.lastVisitOn = lastVisitOn;
     }
 }
