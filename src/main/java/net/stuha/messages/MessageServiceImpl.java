@@ -49,17 +49,24 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Message> find10(UUID conversationId, UUID userId, Long pageNo) {
         LastVisit lastVisit = lastVisitRepository.findFirstByUserIdAndConversationId(userId, conversationId);
+        long unreadCount;
 
         if (lastVisit != null) {
-            long unreadCount = messageRepository.countAllByConversationIdAndCreatedOnAfter(conversationId, lastVisit.getLastVisitOn());
-            // TODO:
-            System.out.println(unreadCount);
+            unreadCount = messageRepository.countAllByConversationIdAndCreatedOnAfter(conversationId, lastVisit.getLastVisitOn());
         } else {
             lastVisit = new LastVisit();
             lastVisit.setId(UUID.randomUUID());
             lastVisit.setConversationId(conversationId);
             lastVisit.setUserId(userId);
+
+            unreadCount = messageRepository.countAllByConversationId(conversationId);
         }
+
+        if (unreadCount > 0) {
+// TODO: Select all unread (limit 10)
+        }
+
+        // TODO: eventually add some already read ones
 
         lastVisit.setLastVisitOn(LocalDateTime.now());
         lastVisitRepository.save(lastVisit);
