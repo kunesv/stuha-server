@@ -1,18 +1,22 @@
 package net.stuha.security;
 
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncoderConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import se.grunka.fortuna.Fortuna;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
 public class TokenServiceImpl implements TokenService {
 
+    private final Random random = Fortuna.createInstance();
+
     @Autowired
     private TokenRepository tokenRepository;
+
+    private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     @Override
     public Token generateToken(UUID userId, Boolean autoRevalidate) {
@@ -39,6 +43,7 @@ public class TokenServiceImpl implements TokenService {
             }
 
             tokenFound.setToken(newTokenValue());
+
             tokenFound.setCreatedOn(LocalDateTime.now());
             tokenFound = tokenRepository.save(tokenFound);
         }
@@ -47,6 +52,11 @@ public class TokenServiceImpl implements TokenService {
     }
 
     private String newTokenValue() {
-        return ESAPI.randomizer().getRandomString(128, EncoderConstants.CHAR_ALPHANUMERICS);
+        final StringBuilder randomString = new StringBuilder();
+        for (int i = 0; i < 128; i++) {
+            randomString.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        }
+
+        return randomString.toString();
     }
 }
