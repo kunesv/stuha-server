@@ -28,7 +28,7 @@ public class FormattedTextTest {
 
         FormattedText formattedText = new FormattedText(rough, messageReplyTos);
 
-        Assert.assertTrue(formattedText.getTextNodes().size() == 9);
+        Assert.assertTrue(formattedText.getTextNodes().size() == 10);
     }
 
 

@@ -15,8 +15,10 @@ import java.util.stream.Stream;
 
 class FormattedTextParser {
     private static final String PARAGRAPH_SEPARATOR = "[\\r\\n]+";
-    private static final String URL_PATTERN = "https?://([a-z0-9.-]+\\.[a-z]+)(/)?([;,/?:@%&=+$a-z0-9_.!~*()\\[\\]#-]*)";
-
+    private static final String URL_PATTERN = "https?://([a-z0-9.-]+\\.[a-z]+)([/?][;,/?:@%&=+$a-z0-9_.!~*()\\[\\]#-]*)?";
+    private static final String NON_URL_END = "?.,!";
+    private static final String BRACKETS_START = "([{";
+    private static final String BRACKETS_END = ")]}";
 
     static List<TextNode> parseText(String rough, List<MessageReplyTo> messageReplyTos) {
         messageReplyTos.sort(Comparator.comparingInt(mrt -> -mrt.getKey().length()));
@@ -73,7 +75,28 @@ class FormattedTextParser {
                     if (linkMatcher.start() > lastMatchEnd) {
                         nodes.add(new RoughText(text.substring(lastMatchEnd, linkMatcher.start())));
                     }
-                    nodes.add(new Link(linkMatcher.group(), linkMatcher.group(1)));
+                    final String url = linkMatcher.group();
+                    final String lastCharacter = url.substring(url.length() - 1);
+                    final boolean shortened = linkMatcher.group(2) != null;
+
+                    if (NON_URL_END.contains(lastCharacter)) {
+                        final boolean shortenedWithNonUrlEnd = shortened && linkMatcher.group(2).length() > 1;
+
+                        nodes.add(new Link(url.substring(0, url.length() - 1), linkMatcher.group(1), shortenedWithNonUrlEnd));
+                        nodes.add(new RoughText(lastCharacter));
+                    } else {
+                        int bracketPosition = BRACKETS_END.indexOf(lastCharacter);
+                        TextNode lastNode = nodes.get(nodes.size() - 1);
+
+                        if (bracketPosition != -1 && lastNode instanceof RoughText && BRACKETS_START.substring(bracketPosition, bracketPosition + 1).contains(((RoughText) lastNode).getText().substring(((RoughText) lastNode).getText().length() - 1))) {
+                            final boolean shortenedWithBracketEnd = shortened && linkMatcher.group(2).length() > 1;
+
+                            nodes.add(new Link(url.substring(0, url.length() - 1), linkMatcher.group(1), shortenedWithBracketEnd));
+                            nodes.add(new RoughText(lastCharacter));
+                        } else {
+                            nodes.add(new Link(url, linkMatcher.group(1), shortened));
+                        }
+                    }
 
                     lastMatchEnd = linkMatcher.end();
                 }
