@@ -5,16 +5,20 @@ import javax.persistence.Id;
 import java.util.UUID;
 
 @Entity
-class Image {
+public class Image {
     @Id
     private UUID id;
 
     private UUID messageId;
+    private UUID conversationId;
 
     private String name;
 
-    private byte[] thumbnail;
-    private byte[] image;
+    private String thumbnail;
+    private String image;
+
+    public Image() {
+    }
 
     public UUID getId() {
         return id;
@@ -32,19 +36,27 @@ class Image {
         this.messageId = messageId;
     }
 
-    public byte[] getThumbnail() {
+    public UUID getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(UUID conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public String getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(byte[] thumbnail) {
+    public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 

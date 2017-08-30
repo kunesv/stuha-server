@@ -1,5 +1,7 @@
 package net.stuha.messages;
 
+import net.stuha.security.AuthorizationService;
+import net.stuha.security.UnauthorizedUserException;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,10 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private ConversationService conversationService;
+
+
     @RequestMapping(value = "/image", method = RequestMethod.POST)
     public void add(HttpServletRequest request) throws IOException {
         InputStream is = request.getInputStream();
@@ -31,9 +37,15 @@ public class ImageController {
     }
 
     @RequestMapping(value = "/thumbnail/{id}", method = RequestMethod.GET)
-    public Image thumbnail(@PathVariable UUID id) throws ImageNotFoundException, InterruptedException {
-        Thread.sleep(1000);
+    public Image thumbnail(@PathVariable UUID id, javax.servlet.http.HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedUserException {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
-        return imageService.thumbnail(id);
+        Image thumbnail = imageService.thumbnail(id);
+
+        if (!conversationService.userHasConversation(thumbnail.getConversationId(), userId)) {
+            throw new UnauthorizedUserException();
+        }
+
+        return thumbnail;
     }
 }

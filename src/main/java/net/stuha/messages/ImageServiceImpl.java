@@ -31,24 +31,22 @@ class ImageServiceImpl implements ImageService {
 
     @Override
     public Image find(UUID id) throws ImageNotFoundException {
-        for (Image image : imageRepository.findAll()) {
-            if (id.equals(image.getId())) {
-                return image;
-            }
-        }
+        Image image = imageRepository.findOne(id);
 
-        throw new ImageNotFoundException(id);
+        // FIXME: Make this little bit more clever - split in 2 database tables: thumbnails, images.
+        image.setThumbnail("");
+
+        return image;
     }
 
     @Override
     public Image thumbnail(UUID id) throws ImageNotFoundException {
-        for (Image image : imageRepository.findAll()) {
-            if (id.equals(image.getId())) {
-                return image;
-            }
-        }
+        Image thumbnail = imageRepository.findOne(id);
 
-        throw new ImageNotFoundException(id);
+        // FIXME: Make this little bit more clever - split in 2 database tables: thumbnails, images.
+        thumbnail.setImage("");
+
+        return thumbnail;
     }
 
 }

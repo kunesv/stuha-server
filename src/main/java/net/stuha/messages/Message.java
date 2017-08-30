@@ -28,8 +28,11 @@ class Message {
     @JsonRawValue
     private String formatted;
 
+    @JsonRawValue
+    private String imageIds;
+
     @Transient
-    private List<String> images = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
 
     public UUID getId() {
         return id;
@@ -79,12 +82,12 @@ class Message {
         this.iconPath = iconPath;
     }
 
-    public List<String> getImages() {
-        return images;
+    public String getImageIds() {
+        return imageIds;
     }
 
-    public void setImages(List<String> images) {
-        this.images = images;
+    public void setImageIds(String imageIds) {
+        this.imageIds = imageIds;
     }
 
     public UUID getConversationId() {
@@ -95,5 +98,11 @@ class Message {
         this.conversationId = conversationId;
     }
 
+    public List<Image> getImages() {
+        return images;
+    }
 
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
 }

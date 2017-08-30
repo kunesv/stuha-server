@@ -1,10 +1,13 @@
 package net.stuha.messages;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.stuha.notifications.LastVisit;
 import net.stuha.notifications.LastVisitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +28,26 @@ public class MessageServiceImpl implements MessageService {
 
 
     @Override
-    public Message add(Message message) {
+    @Transactional
+    public Message add(Message message) throws InvalidMessageFormatException {
         message.setId(UUID.randomUUID());
+        final List<String> imageIds = new ArrayList<>();
 
-        return messageRepository.save(message);
+        Message savedMessage = messageRepository.save(message);
+
+        for (Image image : message.getImages()) {
+            image.setMessageId(savedMessage.getId());
+            image.setConversationId(savedMessage.getConversationId());
+            imageIds.add(imageService.add(image).getId().toString());
+        }
+
+        try {
+            savedMessage.setImageIds(new ObjectMapper().writeValueAsString(imageIds));
+        } catch (JsonProcessingException e) {
+            throw new InvalidMessageFormatException();
+        }
+
+        return messageRepository.save(savedMessage);
     }
 
     @Override

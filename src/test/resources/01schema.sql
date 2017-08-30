@@ -27,6 +27,7 @@ CREATE TABLE message (
   conversation_id UUID REFERENCES conversation (id),
   created_on      TIMESTAMP    NOT NULL,
   formatted       TEXT,
+  image_ids       TEXT,
   icon_path       VARCHAR(8),
   reply_to        UUID REFERENCES message (id),
   rough           TEXT,
@@ -35,11 +36,12 @@ CREATE TABLE message (
 CREATE INDEX ON message (conversation_id, created_on);
 
 CREATE TABLE image (
-  id         UUID PRIMARY KEY,
-  image      BYTEA        NOT NULL,
-  message_id UUID REFERENCES message (id),
-  name       VARCHAR(255) NOT NULL,
-  thumbnail  BYTEA        NOT NULL
+  id              UUID PRIMARY KEY,
+  image           TEXT         NOT NULL,
+  message_id      UUID REFERENCES message (id),
+  conversation_id UUID REFERENCES conversation (id),
+  name            VARCHAR(255) NOT NULL,
+  thumbnail       TEXT         NOT NULL
 );
 
 CREATE TABLE token (
