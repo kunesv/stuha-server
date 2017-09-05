@@ -10,6 +10,9 @@ import java.util.UUID;
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Image")
 class ImageNotFoundException extends Exception {
+    ImageNotFoundException() {
+    }
+
     ImageNotFoundException(UUID id) {
         super(id.toString());
     }

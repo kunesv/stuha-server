@@ -1,15 +1,16 @@
 package net.stuha.messages;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 public interface ImageService {
 
-    Image add(Image image);
+    List<Image> addAll(List<MultipartFile> images, UUID conversationId) throws IOException;
 
-    void addAll(List<Image> images, Message message);
+    File find(UUID id) throws ImageNotFoundException;
 
-    Image find(UUID id) throws ImageNotFoundException;
-
-    Image thumbnail(UUID id) throws ImageNotFoundException;
+    Thumbnail thumbnail(UUID id) throws ImageNotFoundException;
 }

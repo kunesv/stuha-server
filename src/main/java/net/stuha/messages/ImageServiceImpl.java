@@ -2,7 +2,10 @@ package net.stuha.messages;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,41 +13,61 @@ import java.util.UUID;
 class ImageServiceImpl implements ImageService {
 
     @Autowired
+    private FileRepository fileRepository;
+
+    @Autowired
     private ImageRepository imageRepository;
 
-    @Override
-    public Image add(Image image) {
-        image.setId(UUID.randomUUID());
-
-        return imageRepository.save(image);
-    }
+    @Autowired
+    private ThumbnailRepository thumbnailRepository;
 
     @Override
-    public void addAll(List<Image> images, Message message) {
+    public List<Image> addAll(final List<MultipartFile> images, final UUID conversationId) throws IOException {
+        final List<Image> result = new ArrayList<>();
+        for (MultipartFile multipartFile : images) {
+            File file = new File();
+            file.setId(UUID.randomUUID());
+            file.setConversationId(conversationId);
+            file.setFile(multipartFile.getBytes());
+            file.setContentType(multipartFile.getContentType());
+            fileRepository.save(file);
 
-        for (Image image : images) {
-            image.setMessageId(message.getId());
-            add(image);
+            Thumbnail thumbnail = new Thumbnail();
+            thumbnail.setId(file.getId());
+            thumbnail.setConversationId(conversationId);
+            // FIXME: To be calculated
+            thumbnail.setThumbnail(multipartFile.getBytes());
+            thumbnail.setContentType(multipartFile.getContentType());
+            thumbnailRepository.save(thumbnail);
+
+            Image image = new Image();
+            image.setId(file.getId());
+            image.setName(multipartFile.getOriginalFilename());
+            imageRepository.save(image);
+            result.add(image);
         }
 
+        return result;
     }
 
     @Override
-    public Image find(UUID id) throws ImageNotFoundException {
-        Image image = imageRepository.findOne(id);
+    public File find(final UUID id) throws ImageNotFoundException {
+        final File image = fileRepository.findOne(id);
 
-        // FIXME: Make this little bit more clever - split in 2 database tables: thumbnails, images.
-        image.setThumbnail("");
+        if (image == null) {
+            throw new ImageNotFoundException();
+        }
 
         return image;
     }
 
     @Override
-    public Image thumbnail(UUID id) throws ImageNotFoundException {
-        Image thumbnail = imageRepository.findOne(id);
+    public Thumbnail thumbnail(UUID id) throws ImageNotFoundException {
+        final Thumbnail thumbnail = thumbnailRepository.findOne(id);
 
-        // FIXME: Make this little bit more clever - split in 2 database tables: thumbnails, images.
-        thumbnail.setImage("");
+        if (thumbnail == null) {
+            throw new ImageNotFoundException();
+        }
 
         return thumbnail;
     }

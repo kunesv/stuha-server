@@ -2,15 +2,18 @@ package net.stuha.messages;
 
 import net.stuha.security.AuthorizationService;
 import net.stuha.security.UnauthorizedUserException;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import net.stuha.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,32 +23,54 @@ public class ImageController {
     private ImageService imageService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private ConversationService conversationService;
 
 
     @RequestMapping(value = "/image", method = RequestMethod.POST)
-    public void add(HttpServletRequest request) throws IOException {
-        InputStream is = request.getInputStream();
+    public List<Image> add(@RequestParam("images") List<MultipartFile> images, @RequestParam UUID conversationId, HttpServletRequest request) throws IOException, InvalidMessageFormatException {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
+        if (!conversationService.userHasConversation(conversationId, userId)) {
+            throw new InvalidMessageFormatException();
+        }
+
+        return imageService.addAll(images, conversationId);
     }
 
     @RequestMapping(value = "/image/{id}", method = RequestMethod.GET)
-    public Image find(@PathVariable UUID id) throws ImageNotFoundException, InterruptedException {
-        Thread.sleep(1000);
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> find(@PathVariable UUID id, HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedUserException {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
-        return imageService.find(id);
+        File image = imageService.find(id);
+
+        if (!conversationService.userHasConversation(image.getConversationId(), userId)) {
+            throw new UnauthorizedUserException();
+        }
+
+        return ResponseEntity.ok()
+                .contentLength(image.getFile().length)
+                .contentType(MediaType.parseMediaType(image.getContentType()))
+                .body(new InputStreamResource(new ByteArrayInputStream(image.getFile())));
     }
 
     @RequestMapping(value = "/thumbnail/{id}", method = RequestMethod.GET)
-    public Image thumbnail(@PathVariable UUID id, javax.servlet.http.HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedUserException {
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> thumbnail(@PathVariable UUID id, HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedUserException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
-        Image thumbnail = imageService.thumbnail(id);
+        Thumbnail thumbnail = imageService.thumbnail(id);
 
         if (!conversationService.userHasConversation(thumbnail.getConversationId(), userId)) {
             throw new UnauthorizedUserException();
         }
 
-        return thumbnail;
+        return ResponseEntity.ok()
+                .contentLength(thumbnail.getThumbnail().length)
+                .contentType(MediaType.parseMediaType(thumbnail.getContentType()))
+                .body(new InputStreamResource(new ByteArrayInputStream(thumbnail.getThumbnail())));
     }
 }

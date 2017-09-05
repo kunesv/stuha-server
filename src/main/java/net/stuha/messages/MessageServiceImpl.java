@@ -18,7 +18,7 @@ import java.util.UUID;
 public class MessageServiceImpl implements MessageService {
 
     @Autowired
-    private ImageService imageService;
+    private ImageRepository imageRepository;
 
     @Autowired
     private MessageRepository messageRepository;
@@ -29,25 +29,31 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public Message add(Message message) throws InvalidMessageFormatException {
+    public Message add(final Message message) throws InvalidMessageFormatException {
         message.setId(UUID.randomUUID());
         final List<String> imageIds = new ArrayList<>();
 
-        Message savedMessage = messageRepository.save(message);
+        final Message persistentMessage = messageRepository.save(message);
 
-        for (Image image : message.getImages()) {
-            image.setMessageId(savedMessage.getId());
-            image.setConversationId(savedMessage.getConversationId());
-            imageIds.add(imageService.add(image).getId().toString());
+        for (final Image image : message.getImages()) {
+            final Image persistentImage = imageRepository.findOne(image.getId());
+
+            if (persistentImage == null) {
+                throw new InvalidMessageFormatException();
+            }
+
+            persistentImage.setMessageId(persistentMessage.getId());
+            imageRepository.save(persistentImage);
+            imageIds.add(image.getId().toString());
         }
 
         try {
-            savedMessage.setImageIds(new ObjectMapper().writeValueAsString(imageIds));
+            persistentMessage.setImageIds(new ObjectMapper().writeValueAsString(imageIds));
         } catch (JsonProcessingException e) {
             throw new InvalidMessageFormatException();
         }
 
-        return messageRepository.save(savedMessage);
+        return messageRepository.save(persistentMessage);
     }
 
     @Override

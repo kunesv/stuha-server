@@ -35,13 +35,24 @@ CREATE TABLE message (
 );
 CREATE INDEX ON message (conversation_id, created_on);
 
-CREATE TABLE image (
+CREATE TABLE file (
   id              UUID PRIMARY KEY,
-  image           TEXT         NOT NULL,
-  message_id      UUID REFERENCES message (id),
-  conversation_id UUID REFERENCES conversation (id),
-  name            VARCHAR(255) NOT NULL,
-  thumbnail       TEXT         NOT NULL
+  conversation_id UUID REFERENCES conversation (id) NULL,
+  content_type    VARCHAR(255)                      NOT NULL,
+  file            BYTEA                             NOT NULL
+);
+
+CREATE TABLE image (
+  id         UUID PRIMARY KEY REFERENCES file (id),
+  message_id UUID REFERENCES message (id) NULL,
+  name       VARCHAR(1023)                NOT NULL
+);
+
+CREATE TABLE thumbnail (
+  id              UUID PRIMARY KEY REFERENCES file (id),
+  conversation_id UUID REFERENCES conversation (id) NULL,
+  content_type    VARCHAR(255)                      NOT NULL,
+  thumbnail       BYTEA                             NOT NULL
 );
 
 CREATE TABLE token (

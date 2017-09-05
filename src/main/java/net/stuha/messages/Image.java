@@ -10,12 +10,8 @@ public class Image {
     private UUID id;
 
     private UUID messageId;
-    private UUID conversationId;
 
     private String name;
-
-    private String thumbnail;
-    private String image;
 
     public Image() {
     }
@@ -34,30 +30,6 @@ public class Image {
 
     public void setMessageId(UUID messageId) {
         this.messageId = messageId;
-    }
-
-    public UUID getConversationId() {
-        return conversationId;
-    }
-
-    public void setConversationId(UUID conversationId) {
-        this.conversationId = conversationId;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getName() {
