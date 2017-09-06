@@ -45,6 +45,7 @@ CREATE TABLE file (
 CREATE TABLE image (
   id         UUID PRIMARY KEY REFERENCES file (id),
   message_id UUID REFERENCES message (id) NULL,
+  user_id    UUID REFERENCES users (id)   NULL,
   name       VARCHAR(1023)                NOT NULL
 );
 

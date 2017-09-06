@@ -37,7 +37,7 @@ public class ImageController {
             throw new InvalidMessageFormatException();
         }
 
-        return imageService.addAll(images, conversationId);
+        return imageService.addAll(images, conversationId, userId);
     }
 
     @RequestMapping(value = "/image/{id}", method = RequestMethod.GET)

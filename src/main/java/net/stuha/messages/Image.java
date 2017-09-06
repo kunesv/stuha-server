@@ -10,6 +10,7 @@ public class Image {
     private UUID id;
 
     private UUID messageId;
+    private UUID userId;
 
     private String name;
 
@@ -30,6 +31,14 @@ public class Image {
 
     public void setMessageId(UUID messageId) {
         this.messageId = messageId;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
     public String getName() {

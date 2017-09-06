@@ -22,7 +22,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         final UUID userId;
         try {
             userId = UUID.fromString(request.getHeader("userId"));
-        } catch (IllegalArgumentException iae) {
+        } catch (Exception e) {
             throw new UnauthorizedUserException();
         }
 

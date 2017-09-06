@@ -29,7 +29,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public Message add(final Message message) throws InvalidMessageFormatException {
+    public Message add(final Message message, UUID userId) throws InvalidMessageFormatException {
         message.setId(UUID.randomUUID());
         final List<String> imageIds = new ArrayList<>();
 
@@ -38,10 +38,11 @@ public class MessageServiceImpl implements MessageService {
         for (final Image image : message.getImages()) {
             final Image persistentImage = imageRepository.findOne(image.getId());
 
-            if (persistentImage == null) {
+            if (persistentImage == null || !userId.equals(persistentImage.getUserId())) {
                 throw new InvalidMessageFormatException();
             }
 
+            persistentImage.setUserId(null);
             persistentImage.setMessageId(persistentMessage.getId());
             imageRepository.save(persistentImage);
             imageIds.add(image.getId().toString());

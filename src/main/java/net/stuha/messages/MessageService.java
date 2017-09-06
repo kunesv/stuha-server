@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public interface MessageService {
 
-    Message add(Message message) throws InvalidMessageFormatException;
+    Message add(Message message, UUID userId) throws InvalidMessageFormatException;
 
     List<MessageReplyTo> checkReplyTos(List<MessageReplyTo> messageReplyTos, UUID conversationId);
 

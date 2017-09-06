@@ -1,9 +1,12 @@
 package net.stuha.messages;
 
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +25,7 @@ class ImageServiceImpl implements ImageService {
     private ThumbnailRepository thumbnailRepository;
 
     @Override
-    public List<Image> addAll(final List<MultipartFile> images, final UUID conversationId) throws IOException {
+    public List<Image> addAll(final List<MultipartFile> images, final UUID conversationId, UUID userId) throws IOException {
         final List<Image> result = new ArrayList<>();
         for (MultipartFile multipartFile : images) {
             File file = new File();
@@ -35,13 +38,18 @@ class ImageServiceImpl implements ImageService {
             Thumbnail thumbnail = new Thumbnail();
             thumbnail.setId(file.getId());
             thumbnail.setConversationId(conversationId);
-            // FIXME: To be calculated
-            thumbnail.setThumbnail(multipartFile.getBytes());
+
+            final ByteArrayOutputStream smallImage = new ByteArrayOutputStream();
+            Thumbnails.of(new ByteArrayInputStream(multipartFile.getBytes()))
+                    .size(240, 240)
+                    .toOutputStream(smallImage);
+            thumbnail.setThumbnail(smallImage.toByteArray());
             thumbnail.setContentType(multipartFile.getContentType());
             thumbnailRepository.save(thumbnail);
 
             Image image = new Image();
             image.setId(file.getId());
+            image.setUserId(userId);
             image.setName(multipartFile.getOriginalFilename());
             imageRepository.save(image);
             result.add(image);

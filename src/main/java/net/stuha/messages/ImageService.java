@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ImageService {
 
-    List<Image> addAll(List<MultipartFile> images, UUID conversationId) throws IOException;
+    List<Image> addAll(List<MultipartFile> images, UUID conversationId, UUID userId) throws IOException;
 
     File find(UUID id) throws ImageNotFoundException;
 

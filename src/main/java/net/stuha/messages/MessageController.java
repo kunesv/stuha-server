@@ -50,7 +50,7 @@ public class MessageController {
         List<MessageReplyTo> replyTos = messageService.checkReplyTos(messageReplies(replyTo), conversationId);
         message.setFormatted(new FormattedText(message.getRough(), replyTos).toString());
 
-        return messageService.add(message);
+        return messageService.add(message, userId);
     }
 
     @RequestMapping(value = "/messages", method = RequestMethod.GET)
