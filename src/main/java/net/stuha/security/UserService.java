@@ -11,4 +11,6 @@ public interface UserService {
     Token validateUserLogin(LoginForm loginForm) throws LoginFailedException, NoSuchAlgorithmException;
 
     User getUserDetail(UUID userId);
+
+    void changePassword(ChangePasswordForm changePasswordForm) throws UnauthorizedUserException;
 }

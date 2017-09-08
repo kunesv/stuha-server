@@ -1,7 +1,9 @@
 INSERT INTO users (id, name, username) VALUES ('eeeeeee1-bbbb-cccc-eeee-ffffffffffff', 'Test User', 'test');
 INSERT INTO users (id, name, username) VALUES ('eeeeeee2-bbbb-cccc-eeee-ffffffffffff', 'Some Other User', 'other');
-INSERT INTO user_credentials (id, username, password) VALUES ('aaaaaaa1-bbbb-cccc-eeee-ffffffffffff', 'test', 'test');
-INSERT INTO user_credentials (id, username, password) VALUES ('aaaaaaa2-bbbb-cccc-eeee-ffffffffffff', 'other', 'other');
+INSERT INTO user_credentials (id, username, password)
+VALUES ('aaaaaaa1-bbbb-cccc-eeee-ffffffffffff', 'test', '$2a$10$v.0aqv0VQGL8TdLRE66t6.R5rWLxEPKJjHXQRNDnrE1BeGMOup7Hi');
+INSERT INTO user_credentials (id, username, password) VALUES
+  ('aaaaaaa2-bbbb-cccc-eeee-ffffffffffff', 'other', '$2a$10$nkJOaaXq5tSECIr7QxU28OIzsCfUXVZYoPRQf7suNpLkkbUBHymAO');
 INSERT INTO icon (id, path, alt, user_id)
 VALUES ('ccccccc1-bbbb-cccc-eeee-ffffffffffff', '2_1', ':)', 'eeeeeee1-bbbb-cccc-eeee-ffffffffffff');
 INSERT INTO icon (id, path, alt, user_id)
