@@ -5,7 +5,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE user_credentials (
-  id       UUID PRIMARY KEY,
+  id       UUID REFERENCES users (id),
   username VARCHAR(255) REFERENCES users (username),
   password VARCHAR(255) NOT NULL
 );
