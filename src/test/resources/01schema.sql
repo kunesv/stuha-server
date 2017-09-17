@@ -63,13 +63,14 @@ CREATE TABLE token (
   token           VARCHAR(255),
   user_id         UUID REFERENCES users (id)
 );
-
+CREATE INDEX ON token (user_id, token);
 
 CREATE TABLE user_conversation (
   id              UUID PRIMARY KEY,
   user_id         UUID REFERENCES users (id),
   conversation_id UUID REFERENCES conversation (id)
 );
+CREATE INDEX ON user_conversation (conversation_id, user_id);
 
 CREATE TABLE message_reply (
   id          UUID PRIMARY KEY,

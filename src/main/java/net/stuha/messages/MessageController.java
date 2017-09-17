@@ -53,15 +53,37 @@ public class MessageController {
         return messageService.add(message, userId);
     }
 
-    @RequestMapping(value = "/messages", method = RequestMethod.GET)
-    public List<Message> all(@RequestParam UUID conversationId, @RequestParam Long pageNo, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/messages/{conversationId}/load", method = RequestMethod.GET)
+    public Messages load(@PathVariable UUID conversationId, HttpServletRequest request) throws Exception {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
             throw new UnauthorizedUserException();
         }
 
-        return messageService.find10(conversationId, userId, pageNo);
+        return messageService.loadLast10(conversationId, userId);
+    }
+
+    @RequestMapping(value = "/messages/{conversationId}/loadRecent/{messageId}", method = RequestMethod.GET)
+    public List<Message> loadRecent(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws Exception {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+
+        if (!conversationService.userHasConversation(conversationId, userId)) {
+            throw new UnauthorizedUserException();
+        }
+
+        return messageService.loadRecent(conversationId, userId, messageId);
+    }
+
+    @RequestMapping(value = "/messages/{conversationId}/loadMore/{messageId}", method = RequestMethod.GET)
+    public List<Message> loadMore(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws Exception {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+
+        if (!conversationService.userHasConversation(conversationId, userId)) {
+            throw new UnauthorizedUserException();
+        }
+
+        return messageService.loadMore(conversationId, userId, messageId);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.GET)

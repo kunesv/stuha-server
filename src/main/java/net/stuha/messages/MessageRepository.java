@@ -15,4 +15,8 @@ public interface MessageRepository extends CrudRepository<Message, UUID> {
     long countAllByConversationIdAndCreatedOnAfter(UUID conversationId, LocalDateTime createdOn);
 
     long countAllByConversationId(UUID conversationId);
+
+    List<Message> findByConversationIdAndCreatedOnGreaterThanOrderByCreatedOnDesc(UUID conversationId, LocalDateTime createdOn);
+
+    List<Message> findFirst10ByConversationIdAndCreatedOnLessThanOrderByCreatedOnDesc(UUID conversationId, LocalDateTime createdOn);
 }

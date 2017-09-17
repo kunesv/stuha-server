@@ -2,8 +2,7 @@ package net.stuha.messages;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.stuha.notifications.LastVisit;
-import net.stuha.notifications.LastVisitRepository;
+import net.stuha.notifications.LastVisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class MessageServiceImpl implements MessageService {
     private MessageRepository messageRepository;
 
     @Autowired
-    private LastVisitRepository lastVisitRepository;
+    private LastVisitService lastVisitService;
 
 
     @Override
@@ -73,31 +72,37 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> find10(UUID conversationId, UUID userId, Long pageNo) {
-        LastVisit lastVisit = lastVisitRepository.findFirstByUserIdAndConversationId(userId, conversationId);
-        long unreadCount;
+    public Messages loadLast10(UUID conversationId, UUID userId) {
+        Messages messages = new Messages();
+        LocalDateTime lastVisit = lastVisitService.getLastVisitAndUpdate(userId, conversationId);
 
         if (lastVisit != null) {
-            unreadCount = messageRepository.countAllByConversationIdAndCreatedOnAfter(conversationId, lastVisit.getLastVisitOn());
+            messages.setUnreadCount(messageRepository.countAllByConversationIdAndCreatedOnAfter(conversationId, lastVisit));
         } else {
-            lastVisit = new LastVisit();
-            lastVisit.setId(UUID.randomUUID());
-            lastVisit.setConversationId(conversationId);
-            lastVisit.setUserId(userId);
-
-            unreadCount = messageRepository.countAllByConversationId(conversationId);
+            messages.setUnreadCount(messageRepository.countAllByConversationId(conversationId));
         }
 
-        if (unreadCount > 0) {
-// TODO: Select all unread (limit 10)
-        }
+        messages.getMessages().addAll(messageRepository.findFirst10ByConversationIdOrderByCreatedOnDesc(conversationId));
 
-        // TODO: eventually add some already read ones
+        return messages;
+    }
 
-        lastVisit.setLastVisitOn(LocalDateTime.now());
-        lastVisitRepository.save(lastVisit);
+    @Override
+    public List<Message> loadRecent(UUID conversationId, UUID userId, UUID messageId) {
+        lastVisitService.getLastVisitAndUpdate(userId, conversationId);
 
-        return messageRepository.findFirst10ByConversationIdOrderByCreatedOnDesc(conversationId);
+        final Message startFrom = messageRepository.findOne(messageId);
+
+        return messageRepository.findByConversationIdAndCreatedOnGreaterThanOrderByCreatedOnDesc(conversationId, startFrom.getCreatedOn());
+    }
+
+    @Override
+    public List<Message> loadMore(UUID conversationId, UUID userId, UUID messageId) {
+        lastVisitService.getLastVisitAndUpdate(userId, conversationId);
+
+        final Message startFrom = messageRepository.findOne(messageId);
+
+        return messageRepository.findFirst10ByConversationIdAndCreatedOnLessThanOrderByCreatedOnDesc(conversationId, startFrom.getCreatedOn());
     }
 
     @Override

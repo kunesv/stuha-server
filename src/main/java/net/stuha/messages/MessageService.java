@@ -9,7 +9,11 @@ public interface MessageService {
 
     List<MessageReplyTo> checkReplyTos(List<MessageReplyTo> messageReplyTos, UUID conversationId);
 
-    List<Message> find10(UUID conversationId, UUID userId, Long pageNo);
+    Messages loadLast10(UUID conversationId, UUID userId);
+
+    List<Message> loadRecent(UUID conversationId, UUID userId, UUID messageId);
+
+    List<Message> loadMore(UUID conversationId, UUID userId, UUID messageId);
 
     Message findOne(UUID messageId, UUID conversationId);
 
