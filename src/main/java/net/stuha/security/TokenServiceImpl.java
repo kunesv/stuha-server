@@ -24,7 +24,7 @@ public class TokenServiceImpl implements TokenService {
         token.setId(UUID.randomUUID());
         token.setUserId(userId);
         token.setToken(newTokenValue());
-        token.setCreatedOn(LocalDateTime.now());
+        token.setLastUpdate(LocalDateTime.now());
         token.setAutoRevalidate(autoRevalidate);
 
         return tokenRepository.save(token);
@@ -32,20 +32,26 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public Token validateToken(String token, UUID userId) throws UnauthorizedUserException {
-        Token tokenFound = tokenRepository.findByUserIdAndToken(userId, token);
+        final Token tokenFound = tokenRepository.findByUserIdAndToken(userId, token);
         if (tokenFound == null) {
             throw new UnauthorizedUserException();
         }
 
-        if (LocalDateTime.now().minusMinutes(15).isAfter(tokenFound.getCreatedOn())) {
-            if (!tokenFound.getAutoRevalidate() && LocalDateTime.now().minusMinutes(30).isAfter(tokenFound.getCreatedOn())) {
+        if (LocalDateTime.now().minusMinutes(15).isAfter(tokenFound.getLastUpdate())) {
+            if (tokenFound.getRevalidated() || (!tokenFound.getAutoRevalidate() && LocalDateTime.now().minusMinutes(30).isAfter(tokenFound.getLastUpdate()))) {
                 throw new UnauthorizedUserException();
             }
 
-            tokenFound.setToken(newTokenValue());
+            final Token newToken = new Token(tokenFound);
+            newToken.setId(UUID.randomUUID());
+            newToken.setLastUpdate(LocalDateTime.now());
+            newToken.setToken(newTokenValue());
 
-            tokenFound.setCreatedOn(LocalDateTime.now());
-            tokenFound = tokenRepository.save(tokenFound);
+            tokenFound.setRevalidated(true);
+            tokenFound.setLastUpdate(LocalDateTime.now());
+            tokenRepository.save(tokenFound);
+
+            return tokenRepository.save(newToken);
         }
 
         return tokenFound;

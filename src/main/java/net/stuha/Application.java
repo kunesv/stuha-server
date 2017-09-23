@@ -1,6 +1,8 @@
 package net.stuha;
 
 import net.stuha.security.AuthorizationInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,7 +21,10 @@ import org.springframework.web.servlet.mvc.WebContentInterceptor;
 @EnableAutoConfiguration(exclude = {ErrorMvcAutoConfiguration.class})
 public class Application extends WebMvcConfigurerAdapter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
+
     public static void main(String[] args) {
+        LOGGER.info("Starting ... :)");
         SpringApplication.run(Application.class, args);
     }
 

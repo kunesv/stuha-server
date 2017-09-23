@@ -13,9 +13,18 @@ public class Token {
     private UUID userId;
     private String token;
 
-    private LocalDateTime createdOn;
+    private LocalDateTime lastUpdate;
     private Boolean autoRevalidate = false;
 
+    private Boolean revalidated = false;
+
+    public Token() {
+    }
+
+    public Token(Token tokenToCopy) {
+        userId = tokenToCopy.getUserId();
+        autoRevalidate = tokenToCopy.getAutoRevalidate();
+    }
 
     public UUID getId() {
         return id;
@@ -41,12 +50,12 @@ public class Token {
         this.token = token;
     }
 
-    public LocalDateTime getCreatedOn() {
-        return createdOn;
+    public LocalDateTime getLastUpdate() {
+        return lastUpdate;
     }
 
-    public void setCreatedOn(LocalDateTime createdOn) {
-        this.createdOn = createdOn;
+    public void setLastUpdate(LocalDateTime lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     public Boolean getAutoRevalidate() {
@@ -55,5 +64,13 @@ public class Token {
 
     public void setAutoRevalidate(Boolean autoRevalidate) {
         this.autoRevalidate = autoRevalidate;
+    }
+
+    public Boolean getRevalidated() {
+        return revalidated;
+    }
+
+    public void setRevalidated(Boolean revalidated) {
+        this.revalidated = revalidated;
     }
 }

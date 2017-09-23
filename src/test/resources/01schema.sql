@@ -59,9 +59,10 @@ CREATE TABLE thumbnail (
 CREATE TABLE token (
   id              UUID PRIMARY KEY,
   auto_revalidate BOOLEAN   NOT NULL,
-  created_on      TIMESTAMP NOT NULL,
+  last_update     TIMESTAMP NOT NULL,
   token           VARCHAR(255),
-  user_id         UUID REFERENCES users (id)
+  user_id         UUID REFERENCES users (id),
+  revalidated     BOOLEAN   NOT NULL
 );
 CREATE INDEX ON token (user_id, token);
 
