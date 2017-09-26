@@ -6,7 +6,7 @@ import org.junit.Test;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ImageControllerTest extends AbstractTest {
+public class PictureControllerTest extends AbstractTest {
 
     @Test
     public void find() throws Exception {

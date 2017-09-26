@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-public class ImageController {
+public class PictureController {
 
     @Autowired
-    private ImageService imageService;
+    private PictureService pictureService;
 
     @Autowired
     private UserService userService;
@@ -30,14 +30,14 @@ public class ImageController {
 
 
     @RequestMapping(value = "/image", method = RequestMethod.POST)
-    public List<Image> add(@RequestParam("images") List<MultipartFile> images, @RequestParam UUID conversationId, HttpServletRequest request) throws IOException, InvalidMessageFormatException {
+    public List<Picture> add(@RequestParam("images") List<MultipartFile> images, @RequestParam UUID conversationId, HttpServletRequest request) throws IOException, InvalidMessageFormatException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
             throw new InvalidMessageFormatException();
         }
 
-        return imageService.addAll(images, conversationId, userId);
+        return pictureService.addAll(images, conversationId, userId);
     }
 
     @RequestMapping(value = "/image/{id}", method = RequestMethod.GET)
@@ -45,7 +45,7 @@ public class ImageController {
     public ResponseEntity<InputStreamResource> find(@PathVariable UUID id, HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedUserException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
-        File image = imageService.find(id);
+        File image = pictureService.find(id);
 
         if (!conversationService.userHasConversation(image.getConversationId(), userId)) {
             throw new UnauthorizedUserException();
@@ -62,7 +62,7 @@ public class ImageController {
     public ResponseEntity<InputStreamResource> thumbnail(@PathVariable UUID id, HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedUserException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
-        Thumbnail thumbnail = imageService.thumbnail(id);
+        Thumbnail thumbnail = pictureService.thumbnail(id);
 
         if (!conversationService.userHasConversation(thumbnail.getConversationId(), userId)) {
             throw new UnauthorizedUserException();

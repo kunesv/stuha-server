@@ -42,7 +42,7 @@ CREATE TABLE file (
   file            BYTEA                             NOT NULL
 );
 
-CREATE TABLE image (
+CREATE TABLE picture (
   id         UUID PRIMARY KEY REFERENCES file (id),
   message_id UUID REFERENCES message (id) NULL,
   user_id    UUID REFERENCES users (id)   NULL,
@@ -53,7 +53,9 @@ CREATE TABLE thumbnail (
   id              UUID PRIMARY KEY REFERENCES file (id),
   conversation_id UUID REFERENCES conversation (id) NULL,
   content_type    VARCHAR(255)                      NOT NULL,
-  thumbnail       BYTEA                             NOT NULL
+  thumbnail       BYTEA                             NOT NULL,
+  picture_height  INTEGER                           NOT NULL,
+  picture_width   INTEGER                           NOT NULL
 );
 
 CREATE TABLE token (

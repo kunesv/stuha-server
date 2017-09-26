@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.UUID;
 
 /**
- * Image not found in repository
+ * Picture not found in repository
  */
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Image")
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Picture")
 class ImageNotFoundException extends Exception {
     ImageNotFoundException() {
     }

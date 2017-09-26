@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import java.util.UUID;
 
 @Entity
-public class Image {
+public class Picture {
     @Id
     private UUID id;
 
@@ -14,7 +14,7 @@ public class Image {
 
     private String name;
 
-    public Image() {
+    public Picture() {
     }
 
     public UUID getId() {

@@ -32,7 +32,7 @@ class Message {
     private String imageIds;
 
     @Transient
-    private List<Image> images = new ArrayList<>();
+    private List<Picture> images = new ArrayList<>();
 
     public UUID getId() {
         return id;
@@ -98,11 +98,11 @@ class Message {
         this.conversationId = conversationId;
     }
 
-    public List<Image> getImages() {
+    public List<Picture> getImages() {
         return images;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<Picture> images) {
         this.images = images;
     }
 }

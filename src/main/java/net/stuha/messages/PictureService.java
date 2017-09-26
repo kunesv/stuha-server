@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-public interface ImageService {
+public interface PictureService {
 
-    List<Image> addAll(List<MultipartFile> images, UUID conversationId, UUID userId) throws IOException;
+    List<Picture> addAll(List<MultipartFile> images, UUID conversationId, UUID userId) throws IOException;
 
     File find(UUID id) throws ImageNotFoundException;
 

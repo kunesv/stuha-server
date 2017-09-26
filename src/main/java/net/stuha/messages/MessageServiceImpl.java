@@ -17,7 +17,7 @@ import java.util.UUID;
 public class MessageServiceImpl implements MessageService {
 
     @Autowired
-    private ImageRepository imageRepository;
+    private PictureRepository pictureRepository;
 
     @Autowired
     private MessageRepository messageRepository;
@@ -34,8 +34,8 @@ public class MessageServiceImpl implements MessageService {
 
         final Message persistentMessage = messageRepository.save(message);
 
-        for (final Image image : message.getImages()) {
-            final Image persistentImage = imageRepository.findOne(image.getId());
+        for (final Picture image : message.getImages()) {
+            final Picture persistentImage = pictureRepository.findOne(image.getId());
 
             if (persistentImage == null || !userId.equals(persistentImage.getUserId())) {
                 throw new InvalidMessageFormatException();
@@ -43,7 +43,7 @@ public class MessageServiceImpl implements MessageService {
 
             persistentImage.setUserId(null);
             persistentImage.setMessageId(persistentMessage.getId());
-            imageRepository.save(persistentImage);
+            pictureRepository.save(persistentImage);
             imageIds.add(image.getId().toString());
         }
 
