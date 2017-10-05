@@ -39,6 +39,11 @@ class PictureServiceImpl implements PictureService {
         private int height;
         private int width;
 
+        public BigPictureDimensions(int height, int width) {
+            this.height = height;
+            this.width = width;
+        }
+
         public int getHeight() {
             return height;
         }
@@ -70,42 +75,46 @@ class PictureServiceImpl implements PictureService {
                         file.setConversationId(conversationId);
                         file.setContentType(multipartFile.getContentType());
 
-                        final BigPictureDimensions bigPictureDimensions = new BigPictureDimensions();
                         final BufferedImage bigPicture = ImageIO.read(multipartFile.getInputStream());
+                        final BigPictureDimensions bigPictureDimensions = new BigPictureDimensions(bigPicture.getHeight(), bigPicture.getWidth());
 
-                        // FIXME: This should be little bit more clever ...
                         if (multipartFile.getSize() > SIZE_CONSTRAINT) {
+                            if (bigPicture.getHeight() > HEIGHT_CONSTRAINT) {
+                                bigPictureDimensions.setHeight(HEIGHT_CONSTRAINT);
+                            }
+                            if (bigPicture.getWidth() > WIDTH_CONSTRAINT) {
+                                bigPictureDimensions.setWidth(WIDTH_CONSTRAINT);
+                            }
+
                             final ByteArrayOutputStream bigPictureReduced = new ByteArrayOutputStream();
                             Thumbnails.of(multipartFile.getInputStream())
-                                    .size(WIDTH_CONSTRAINT, HEIGHT_CONSTRAINT).toOutputStream(bigPictureReduced);
+                                    .outputFormat("jpg")
+                                    .size(bigPictureDimensions.getWidth(), bigPictureDimensions.getHeight())
+                                    .toOutputStream(bigPictureReduced);
+                            file.setContentType("image/jpeg");
                             file.setFile(bigPictureReduced.toByteArray());
-
-                            bigPictureDimensions.setHeight(HEIGHT_CONSTRAINT);
-                            bigPictureDimensions.setWidth(WIDTH_CONSTRAINT);
                         } else {
                             file.setFile(multipartFile.getBytes());
-
-                            bigPictureDimensions.setHeight(bigPicture.getHeight());
-                            bigPictureDimensions.setWidth(bigPicture.getWidth());
                         }
                         fileRepository.save(file);
 
                         final Thumbnail thumbnail = new Thumbnail();
                         thumbnail.setId(id);
                         thumbnail.setConversationId(conversationId);
-                        thumbnail.setContentType(multipartFile.getContentType());
+                        thumbnail.setContentType("image/jpeg");
                         final ByteArrayOutputStream smallPicture = new ByteArrayOutputStream();
                         Thumbnails.of(multipartFile.getInputStream())
+                                .outputFormat("jpg")
                                 .size(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT).toOutputStream(smallPicture);
                         thumbnail.setThumbnail(smallPicture.toByteArray());
-                        thumbnail.setPictureHeight(bigPictureDimensions.getHeight());
-                        thumbnail.setPictureWidth(bigPictureDimensions.getWidth());
                         thumbnailRepository.save(thumbnail);
 
                         final Picture picture = new Picture();
                         picture.setId(id);
                         picture.setUserId(userId);
                         picture.setName(multipartFile.getOriginalFilename());
+                        picture.setHeight(bigPictureDimensions.getHeight());
+                        picture.setWidth(bigPictureDimensions.getWidth());
                         return pictureRepository.save(picture);
                     } catch (IOException e) {
                         throw new RuntimeException("Failed to create a picture.");

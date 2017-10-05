@@ -29,7 +29,7 @@ class Message {
     private String formatted;
 
     @JsonRawValue
-    private String imageIds;
+    private String pictures;
 
     @Transient
     private List<Picture> images = new ArrayList<>();
@@ -82,12 +82,12 @@ class Message {
         this.iconPath = iconPath;
     }
 
-    public String getImageIds() {
-        return imageIds;
+    public String getPictures() {
+        return pictures;
     }
 
-    public void setImageIds(String imageIds) {
-        this.imageIds = imageIds;
+    public void setPictures(String pictures) {
+        this.pictures = pictures;
     }
 
     public UUID getConversationId() {

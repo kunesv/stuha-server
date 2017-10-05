@@ -27,7 +27,7 @@ CREATE TABLE message (
   conversation_id UUID REFERENCES conversation (id),
   created_on      TIMESTAMP    NOT NULL,
   formatted       TEXT,
-  image_ids       TEXT,
+  pictures        TEXT,
   icon_path       VARCHAR(8),
   reply_to        UUID REFERENCES message (id),
   rough           TEXT,
@@ -46,16 +46,16 @@ CREATE TABLE picture (
   id         UUID PRIMARY KEY REFERENCES file (id),
   message_id UUID REFERENCES message (id) NULL,
   user_id    UUID REFERENCES users (id)   NULL,
-  name       VARCHAR(1023)                NOT NULL
+  name       VARCHAR(1023)                NOT NULL,
+  height     INTEGER                      NOT NULL,
+  width      INTEGER                      NOT NULL
 );
 
 CREATE TABLE thumbnail (
   id              UUID PRIMARY KEY REFERENCES file (id),
   conversation_id UUID REFERENCES conversation (id) NULL,
   content_type    VARCHAR(255)                      NOT NULL,
-  thumbnail       BYTEA                             NOT NULL,
-  picture_height  INTEGER                           NOT NULL,
-  picture_width   INTEGER                           NOT NULL
+  thumbnail       BYTEA                             NOT NULL
 );
 
 CREATE TABLE token (

@@ -15,9 +15,6 @@ public class Thumbnail {
 
     private String contentType;
 
-    private Integer pictureHeight;
-
-    private Integer pictureWidth;
 
     public UUID getId() {
         return id;
@@ -51,19 +48,4 @@ public class Thumbnail {
         this.contentType = contentType;
     }
 
-    public Integer getPictureHeight() {
-        return pictureHeight;
-    }
-
-    public void setPictureHeight(Integer pictureHeight) {
-        this.pictureHeight = pictureHeight;
-    }
-
-    public Integer getPictureWidth() {
-        return pictureWidth;
-    }
-
-    public void setPictureWidth(Integer pictureWidth) {
-        this.pictureWidth = pictureWidth;
-    }
 }

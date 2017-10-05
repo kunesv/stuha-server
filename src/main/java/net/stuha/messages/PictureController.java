@@ -5,6 +5,7 @@ import net.stuha.security.UnauthorizedUserException;
 import net.stuha.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,7 @@ public class PictureController {
         }
 
         return ResponseEntity.ok()
+                .header("Cache-Control", CacheControl.noCache().getHeaderValue())
                 .contentLength(image.getFile().length)
                 .contentType(MediaType.parseMediaType(image.getContentType()))
                 .body(new InputStreamResource(new ByteArrayInputStream(image.getFile())));

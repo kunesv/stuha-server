@@ -30,12 +30,12 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     public Message add(final Message message, UUID userId) throws InvalidMessageFormatException {
         message.setId(UUID.randomUUID());
-        final List<String> imageIds = new ArrayList<>();
+        final List<Picture> pictures = new ArrayList<>();
 
         final Message persistentMessage = messageRepository.save(message);
 
-        for (final Picture image : message.getImages()) {
-            final Picture persistentImage = pictureRepository.findOne(image.getId());
+        for (final Picture picture : message.getImages()) {
+            final Picture persistentImage = pictureRepository.findOne(picture.getId());
 
             if (persistentImage == null || !userId.equals(persistentImage.getUserId())) {
                 throw new InvalidMessageFormatException();
@@ -44,11 +44,11 @@ public class MessageServiceImpl implements MessageService {
             persistentImage.setUserId(null);
             persistentImage.setMessageId(persistentMessage.getId());
             pictureRepository.save(persistentImage);
-            imageIds.add(image.getId().toString());
+            pictures.add(persistentImage);
         }
 
         try {
-            persistentMessage.setImageIds(new ObjectMapper().writeValueAsString(imageIds));
+            persistentMessage.setPictures(new ObjectMapper().writeValueAsString(pictures));
         } catch (JsonProcessingException e) {
             throw new InvalidMessageFormatException();
         }
