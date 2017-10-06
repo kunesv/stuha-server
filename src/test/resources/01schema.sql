@@ -89,3 +89,4 @@ CREATE TABLE last_visit (
   last_visit_on   TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX ON last_visit (user_id, conversation_id);
+CREATE INDEX ON last_visit (user_id);

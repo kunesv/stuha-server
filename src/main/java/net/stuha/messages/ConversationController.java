@@ -1,6 +1,8 @@
 package net.stuha.messages;
 
 
+import net.stuha.notifications.UnreadCount;
+import net.stuha.notifications.UnreadCountService;
 import net.stuha.security.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -17,8 +19,16 @@ public class ConversationController {
     @Autowired
     private ConversationService conversationService;
 
-    @RequestMapping(value = "/userConversations", method = RequestMethod.GET)
+    @Autowired
+    private UnreadCountService unreadCountService;
+
+    @RequestMapping(value = "/conversations", method = RequestMethod.GET)
     public List<Conversation> userConversations(@RequestAttribute(AuthorizationService.GENUINE_USER_ID) UUID userId) {
         return conversationService.userConversations(userId);
+    }
+
+    @RequestMapping(value = "/conversations/status", method = RequestMethod.GET)
+    public List<UnreadCount> conversationsStatus(@RequestAttribute(AuthorizationService.GENUINE_USER_ID) UUID userId) {
+        return unreadCountService.allUnreadCounts(userId);
     }
 }

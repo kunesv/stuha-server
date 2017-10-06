@@ -26,9 +26,9 @@ public class MessageServiceImpl implements MessageService {
     private LastVisitService lastVisitService;
 
 
-    @Override
     @Transactional
-    public Message add(final Message message, UUID userId) throws InvalidMessageFormatException {
+    @Override
+    public List<Message> add(final Message message, UUID userId) throws InvalidMessageFormatException {
         message.setId(UUID.randomUUID());
         final List<Picture> pictures = new ArrayList<>();
 
@@ -53,7 +53,9 @@ public class MessageServiceImpl implements MessageService {
             throw new InvalidMessageFormatException();
         }
 
-        return messageRepository.save(persistentMessage);
+        messageRepository.save(persistentMessage);
+
+        return loadRecent(message.getConversationId(), userId, message.getLastMessageId());
     }
 
     @Override
@@ -71,6 +73,7 @@ public class MessageServiceImpl implements MessageService {
         return results;
     }
 
+    @Transactional
     @Override
     public Messages loadLast10(UUID conversationId, UUID userId) {
         Messages messages = new Messages();
@@ -87,15 +90,33 @@ public class MessageServiceImpl implements MessageService {
         return messages;
     }
 
+    @Transactional
+    @Override
+    public List<Message> loadRecent(UUID conversationId, UUID userId) {
+        final LocalDateTime lastVisit = lastVisitService.getLastVisitAndUpdate(userId, conversationId);
+
+        return loadRecent(conversationId, lastVisit);
+    }
+
+    @Transactional
     @Override
     public List<Message> loadRecent(UUID conversationId, UUID userId, UUID messageId) {
         lastVisitService.getLastVisitAndUpdate(userId, conversationId);
 
-        final Message startFrom = messageRepository.findOne(messageId);
+        if (messageId != null) {
+            final Message startFrom = messageRepository.findOne(messageId);
 
-        return messageRepository.findByConversationIdAndCreatedOnGreaterThanOrderByCreatedOnDesc(conversationId, startFrom.getCreatedOn());
+            return loadRecent(conversationId, startFrom.getCreatedOn());
+        } else {
+            return messageRepository.findByConversationIdOrderByCreatedOnDesc(conversationId);
+        }
     }
 
+    private List<Message> loadRecent(UUID conversationId, LocalDateTime loadAfter) {
+        return messageRepository.findByConversationIdAndCreatedOnGreaterThanOrderByCreatedOnDesc(conversationId, loadAfter);
+    }
+
+    @Transactional
     @Override
     public List<Message> loadMore(UUID conversationId, UUID userId, UUID messageId) {
         lastVisitService.getLastVisitAndUpdate(userId, conversationId);

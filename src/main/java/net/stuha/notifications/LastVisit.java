@@ -1,11 +1,14 @@
 package net.stuha.notifications;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@SqlResultSetMapping(name = "UnreadCount", classes = {
+        @ConstructorResult(targetClass = UnreadCount.class,
+                columns = {@ColumnResult(name = "conversation_id", type = UUID.class), @ColumnResult(name = "unread_count", type = Long.class)})
+})
 public class LastVisit {
     @Id
     private UUID id;

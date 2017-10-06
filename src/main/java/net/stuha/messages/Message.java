@@ -34,6 +34,9 @@ class Message {
     @Transient
     private List<Picture> images = new ArrayList<>();
 
+    @Transient
+    private UUID lastMessageId;
+
     public UUID getId() {
         return id;
     }
@@ -104,5 +107,13 @@ class Message {
 
     public void setImages(List<Picture> images) {
         this.images = images;
+    }
+
+    public UUID getLastMessageId() {
+        return lastMessageId;
+    }
+
+    public void setLastMessageId(UUID lastMessageId) {
+        this.lastMessageId = lastMessageId;
     }
 }

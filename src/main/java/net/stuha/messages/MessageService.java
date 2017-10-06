@@ -5,11 +5,13 @@ import java.util.UUID;
 
 public interface MessageService {
 
-    Message add(Message message, UUID userId) throws InvalidMessageFormatException;
+    List<Message> add(Message message, UUID userId) throws InvalidMessageFormatException;
 
     List<MessageReplyTo> checkReplyTos(List<MessageReplyTo> messageReplyTos, UUID conversationId);
 
     Messages loadLast10(UUID conversationId, UUID userId);
+
+    List<Message> loadRecent(UUID conversationId, UUID userId);
 
     List<Message> loadRecent(UUID conversationId, UUID userId, UUID messageId);
 

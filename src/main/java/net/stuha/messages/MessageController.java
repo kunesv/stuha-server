@@ -32,7 +32,7 @@ public class MessageController {
     private ConversationService conversationService;
 
     @RequestMapping(value = "/message", method = RequestMethod.POST)
-    public Message add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws Exception {
+    public List<Message> add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws Exception {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
         final User user = userService.getUserDetail(userId);
 

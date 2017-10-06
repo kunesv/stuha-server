@@ -34,5 +34,4 @@ public class LastVisitServiceImpl implements LastVisitService {
         return lastVisitDateTime;
     }
 
-
 }
