@@ -7,4 +7,6 @@ public interface ConversationService {
     List<Conversation> userConversations(UUID userId);
 
     Boolean userHasConversation(UUID conversationId, UUID userId);
+
+    Conversation add(Conversation conversation, UUID userId);
 }

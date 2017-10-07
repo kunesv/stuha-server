@@ -14,6 +14,7 @@ CREATE TABLE conversation (
   id    UUID PRIMARY KEY,
   title VARCHAR(255)
 );
+CREATE UNIQUE INDEX ON conversation (title);
 
 CREATE TABLE icon (
   id      UUID PRIMARY KEY,
