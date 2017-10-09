@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findRelatedUsersByName(String name, UUID userId) {
-        return userRepository.findRelated(name, userId);
+    public List<User> findRelatedUsersByName(String name, UUID userId, UUID conversationId) {
+        return userRepository.findRelated(name, userId, conversationId);
     }
 }

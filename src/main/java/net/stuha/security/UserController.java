@@ -25,10 +25,10 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/relatedUsers/{name}", method = RequestMethod.GET)
-    public List<User> findMembers(@PathVariable String name, HttpServletRequest request) {
+    @RequestMapping(value = "/conversation/{conversationId}/addMember/{name}", method = RequestMethod.GET)
+    public List<User> findMembers(@PathVariable UUID conversationId, @PathVariable String name, HttpServletRequest request) {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
-        return userService.findRelatedUsersByName(name, userId);
+        return userService.findRelatedUsersByName(name, userId, conversationId);
     }
 }

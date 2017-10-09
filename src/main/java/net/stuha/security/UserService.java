@@ -13,5 +13,5 @@ public interface UserService {
 
     void changePassword(ChangePasswordForm changePasswordForm) throws UnauthorizedRequestException;
 
-    List<User> findRelatedUsersByName(String name, UUID userId);
+    List<User> findRelatedUsersByName(String name, UUID userId, UUID conversationId);
 }

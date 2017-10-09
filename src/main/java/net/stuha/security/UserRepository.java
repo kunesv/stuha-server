@@ -20,6 +20,9 @@ public interface UserRepository extends CrudRepository<User, UUID> {
             "                                WHERE user_id = ?2) " +
             "      GROUP BY user_id " +
             "      ORDER BY user_id) uc LEFT JOIN users u ON uc.user_id = u.id " +
-            "WHERE upper(name) LIKE upper(?1 || '%')", nativeQuery = true)
-    List<User> findRelated(String name, UUID userId);
+            "WHERE upper(name) LIKE upper(?1 || '%') " +
+            "      AND u.id NOT IN (SELECT user_id " +
+            "                       FROM user_conversation " +
+            "                       WHERE conversation_id = ?3)", nativeQuery = true)
+    List<User> findRelated(String name, UUID userId, UUID conversationId);
 }
