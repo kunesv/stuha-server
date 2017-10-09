@@ -1,5 +1,6 @@
 package net.stuha.security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.stuha.messages.Icon;
 
 import javax.persistence.Entity;
@@ -19,6 +20,7 @@ public class User {
 
     private String name;
 
+    @JsonIgnore
     private String username;
 
     @Transient

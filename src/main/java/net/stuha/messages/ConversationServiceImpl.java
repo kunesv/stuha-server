@@ -25,21 +25,32 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public Boolean userHasConversation(UUID conversationId, UUID userId) {
-        return conversationRepository.findConversationByIdAndUserId(conversationId, userId) > 0;
+        return findConversation(conversationId, userId) != null;
+    }
+
+    @Override
+    public Conversation findConversation(UUID conversationId, UUID userId) {
+        return conversationRepository.findConversationByIdAndUserId(conversationId, userId);
     }
 
     @Transactional
     @Override
     public Conversation add(final Conversation conversation, UUID userId) {
         conversation.setId(UUID.randomUUID());
+        conversation.setNoJoin(false);
         conversationRepository.save(conversation);
 
-        final UserConversation userConversation = new UserConversation();
-        userConversation.setId(UUID.randomUUID());
-        userConversation.setUserId(userId);
-        userConversation.setConversationId(conversation.getId());
-        userConversationRepository.save(userConversation);
+        addMember(conversation.getId(), userId);
 
         return conversation;
+    }
+
+    @Override
+    public UserConversation addMember(UUID conversationId, UUID memberId) {
+        final UserConversation userConversation = new UserConversation();
+        userConversation.setId(UUID.randomUUID());
+        userConversation.setUserId(memberId);
+        userConversation.setConversationId(conversationId);
+        return userConversationRepository.save(userConversation);
     }
 }

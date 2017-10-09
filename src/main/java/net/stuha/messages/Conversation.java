@@ -13,6 +13,8 @@ public class Conversation {
 
     private String title;
 
+    private Boolean noJoin;
+
     public UUID getId() {
         return id;
     }
@@ -27,5 +29,13 @@ public class Conversation {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Boolean getNoJoin() {
+        return noJoin;
+    }
+
+    public void setNoJoin(Boolean noJoin) {
+        this.noJoin = noJoin;
     }
 }

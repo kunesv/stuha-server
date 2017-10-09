@@ -9,14 +9,14 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
 
-public class UnreadCountDAOImplTest extends AbstractTest {
+public class UnreadCountRepositoryCustomTest extends AbstractTest {
 
     @Autowired
-    private UnreadCountDAO unreadCountDAO;
+    private UnreadCountRepositoryCustom unreadCountRepositoryCustom;
 
     @Test
     public void readAllUnreadCounts() throws Exception {
-        List<UnreadCount> unreadCounts = unreadCountDAO.readAllUnreadCounts(UUID.fromString("00000000-0000-f3e5-c5ed-000000000017"));
+        List<UnreadCount> unreadCounts = unreadCountRepositoryCustom.readAllUnreadCounts(UUID.fromString("00000000-0000-f3e5-c5ed-000000000017"));
         assertNotNull("Some or none unread counts expected.", unreadCounts);
     }
 

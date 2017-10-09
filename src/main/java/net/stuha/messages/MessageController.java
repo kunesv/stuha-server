@@ -3,7 +3,7 @@ package net.stuha.messages;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.stuha.messages.formattedText.FormattedText;
 import net.stuha.security.AuthorizationService;
-import net.stuha.security.UnauthorizedUserException;
+import net.stuha.security.UnauthorizedRequestException;
 import net.stuha.security.User;
 import net.stuha.security.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -32,12 +32,12 @@ public class MessageController {
     private ConversationService conversationService;
 
     @RequestMapping(value = "/message", method = RequestMethod.POST)
-    public List<Message> add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws Exception {
+    public List<Message> add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws UnauthorizedRequestException, InvalidMessageFormatException, IOException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
         final User user = userService.getUserDetail(userId);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
-            throw new InvalidMessageFormatException();
+            throw new UnauthorizedRequestException();
         }
 
         if (!validIcon(message.getIconPath(), user)) {
@@ -54,45 +54,45 @@ public class MessageController {
     }
 
     @RequestMapping(value = "/messages/{conversationId}/load", method = RequestMethod.GET)
-    public Messages load(@PathVariable UUID conversationId, HttpServletRequest request) throws Exception {
+    public Messages load(@PathVariable UUID conversationId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
-            throw new UnauthorizedUserException();
+            throw new UnauthorizedRequestException();
         }
 
         return messageService.loadLast10(conversationId, userId);
     }
 
     @RequestMapping(value = "/messages/{conversationId}/loadRecent/{messageId}", method = RequestMethod.GET)
-    public List<Message> loadRecent(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws Exception {
+    public List<Message> loadRecent(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
-            throw new UnauthorizedUserException();
+            throw new UnauthorizedRequestException();
         }
 
         return messageService.loadRecent(conversationId, userId, messageId);
     }
 
     @RequestMapping(value = "/messages/{conversationId}/loadMore/{messageId}", method = RequestMethod.GET)
-    public List<Message> loadMore(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws Exception {
+    public List<Message> loadMore(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
-            throw new UnauthorizedUserException();
+            throw new UnauthorizedRequestException();
         }
 
         return messageService.loadMore(conversationId, userId, messageId);
     }
 
     @RequestMapping(value = "/message", method = RequestMethod.GET)
-    public Message one(@RequestParam UUID messageId, HttpServletRequest request) throws UnauthorizedUserException {
+    public Message one(@RequestParam UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
         Message message = messageService.findOne(messageId);
 
         if (!conversationService.userHasConversation(message.getConversationId(), userId)) {
-            throw new UnauthorizedUserException();
+            throw new UnauthorizedRequestException();
         }
 
         return message;

@@ -10,10 +10,10 @@ import java.util.UUID;
 public class UnreadCountServiceImpl implements UnreadCountService {
 
     @Autowired
-    private UnreadCountDAO unreadCountDAO;
+    private UnreadCountRepositoryCustom unreadCountRepositoryCustom;
 
     @Override
     public List<UnreadCount> allUnreadCounts(UUID userId) {
-        return unreadCountDAO.readAllUnreadCounts(userId);
+        return unreadCountRepositoryCustom.readAllUnreadCounts(userId);
     }
 }

@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ConversationRepository extends CrudRepository<Conversation, UUID> {
-    @Query(value = "select c.id as id, c.title as title from user_conversation uc, conversation c where uc.user_id = ?1 and uc.conversation_id = c.id", nativeQuery = true)
+    @Query(value = "SELECT c.* FROM user_conversation uc LEFT JOIN conversation c ON uc.conversation_id = c.id WHERE uc.user_id = ?1", nativeQuery = true)
     List<Conversation> findConversationsByUserId(UUID userId);
 
-    @Query(value = "select count(*) from user_conversation uc where uc.conversation_id = ?1 and uc.user_id = ?2", nativeQuery = true)
-    Long findConversationByIdAndUserId(UUID conversationId, UUID userId);
+    @Query(value = "SELECT c.* FROM user_conversation uc LEFT JOIN conversation c ON uc.conversation_id = c.id WHERE uc.conversation_id = ?1 AND uc.user_id = ?2", nativeQuery = true)
+    Conversation findConversationByIdAndUserId(UUID conversationId, UUID userId);
 }

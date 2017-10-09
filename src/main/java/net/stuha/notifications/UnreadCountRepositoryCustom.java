@@ -3,6 +3,6 @@ package net.stuha.notifications;
 import java.util.List;
 import java.util.UUID;
 
-public interface UnreadCountDAO {
+public interface UnreadCountRepositoryCustom {
     List<UnreadCount> readAllUnreadCounts(UUID userId);
 }

@@ -1,7 +1,7 @@
 package net.stuha.messages;
 
 import net.stuha.security.AuthorizationService;
-import net.stuha.security.UnauthorizedUserException;
+import net.stuha.security.UnauthorizedRequestException;
 import net.stuha.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -43,13 +43,13 @@ public class PictureController {
 
     @RequestMapping(value = "/image/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<InputStreamResource> find(@PathVariable UUID id, HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedUserException {
+    public ResponseEntity<InputStreamResource> find(@PathVariable UUID id, HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         File image = pictureService.find(id);
 
         if (!conversationService.userHasConversation(image.getConversationId(), userId)) {
-            throw new UnauthorizedUserException();
+            throw new UnauthorizedRequestException();
         }
 
         return ResponseEntity.ok()
@@ -61,13 +61,13 @@ public class PictureController {
 
     @RequestMapping(value = "/thumbnail/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<InputStreamResource> thumbnail(@PathVariable UUID id, HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedUserException {
+    public ResponseEntity<InputStreamResource> thumbnail(@PathVariable UUID id, HttpServletRequest request) throws ImageNotFoundException, InterruptedException, UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         Thumbnail thumbnail = pictureService.thumbnail(id);
 
         if (!conversationService.userHasConversation(thumbnail.getConversationId(), userId)) {
-            throw new UnauthorizedUserException();
+            throw new UnauthorizedRequestException();
         }
 
         return ResponseEntity.ok()

@@ -1,11 +1,13 @@
 package net.stuha.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -20,5 +22,13 @@ public class UserController {
         UUID currentUserId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         return userService.getUserDetail(currentUserId);
+    }
+
+
+    @RequestMapping(value = "/relatedUsers/{name}", method = RequestMethod.GET)
+    public List<User> findMembers(@PathVariable String name, HttpServletRequest request) {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+
+        return userService.findRelatedUsersByName(name, userId);
     }
 }

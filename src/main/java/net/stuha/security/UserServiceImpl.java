@@ -6,6 +6,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -22,15 +23,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TokenService tokenService;
-
-    @Override
-    public UUID validateUserId(UUID id) throws UnauthorizedUserException {
-        final User user = userRepository.findOne(id);
-        if (user == null) {
-            throw new UnauthorizedUserException();
-        }
-        return user.getId();
-    }
 
     @Override
     public Token validateUserLogin(LoginForm loginForm) throws LoginFailedException {
@@ -56,14 +48,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(ChangePasswordForm changePasswordForm) throws UnauthorizedUserException {
+    public void changePassword(ChangePasswordForm changePasswordForm) throws UnauthorizedRequestException {
         final UserCredentials userCredentials = userCredentialsRepository.findByUsername(changePasswordForm.getUsername());
         if (!BCrypt.checkpw(changePasswordForm.getPassword(), userCredentials.getPassword())) {
-            throw new UnauthorizedUserException();
+            throw new UnauthorizedRequestException();
         }
 
         final String newPassword = BCrypt.hashpw(changePasswordForm.getNewPassword(), BCrypt.gensalt());
         userCredentials.setPassword(newPassword);
         userCredentialsRepository.save(userCredentials);
+    }
+
+    @Override
+    public List<User> findRelatedUsersByName(String name, UUID userId) {
+        return userRepository.findRelated(name, userId);
     }
 }

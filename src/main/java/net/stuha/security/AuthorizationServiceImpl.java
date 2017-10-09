@@ -32,7 +32,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         }
 
         Token validToken = tokenService.validateToken(token, userId);
-        request.setAttribute(GENUINE_USER_ID, userService.validateUserId(validToken.getUserId()));
+        request.setAttribute(GENUINE_USER_ID, userId);
         if (!StringUtils.equals(token, validToken.getToken())) {
             response.setHeader("token", validToken.getToken());
         }

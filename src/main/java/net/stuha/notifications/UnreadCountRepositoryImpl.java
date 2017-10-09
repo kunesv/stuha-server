@@ -3,14 +3,13 @@ package net.stuha.notifications;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
-public class UnreadCountDAOImpl implements UnreadCountDAO {
+public class UnreadCountRepositoryImpl implements UnreadCountRepositoryCustom {
     private static final String ALL_UNREAD_QUERY = "SELECT " +
             "  lv.conversation_id AS conversation_id, " +
             "  count(id) AS unread_count " +
@@ -24,25 +23,13 @@ public class UnreadCountDAOImpl implements UnreadCountDAO {
             "      AND lv.last_visit_on < message.created_on " +
             "GROUP BY lv.conversation_id";
 
-
-    private EntityManagerFactory emf;
-
-    @PersistenceUnit
-    public void setEntityManagerFactory(EntityManagerFactory emf) {
-        this.emf = emf;
-    }
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public List<UnreadCount> readAllUnreadCounts(UUID userId) {
-        final EntityManager em = emf.createEntityManager();
-        try {
-            final Query query = em.createNativeQuery(ALL_UNREAD_QUERY, "UnreadCount");
-            query.setParameter(1, userId.toString());
-            return query.getResultList();
-        } finally {
-            if (em != null) {
-                em.close();
-            }
-        }
+        final Query query = em.createNativeQuery(ALL_UNREAD_QUERY, "UnreadCount");
+        query.setParameter(1, userId.toString());
+        return query.getResultList();
     }
 }
