@@ -1,7 +1,6 @@
 package net.stuha.messages;
 
 
-import net.stuha.notifications.UnreadCount;
 import net.stuha.notifications.UnreadCountService;
 import net.stuha.security.AuthorizationService;
 import net.stuha.security.UnauthorizedRequestException;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -58,8 +58,8 @@ public class ConversationController {
         return conversationService.userConversations(userId);
     }
 
-    @RequestMapping(value = "/conversations/status", method = RequestMethod.GET)
-    public List<UnreadCount> conversationsStatus(@RequestAttribute(AuthorizationService.GENUINE_USER_ID) UUID userId) {
+    @RequestMapping(value = "/conversations/unreadCounts", method = RequestMethod.GET)
+    public Map<UUID, Long> unreadCounts(@RequestAttribute(AuthorizationService.GENUINE_USER_ID) UUID userId) {
         return unreadCountService.allUnreadCounts(userId);
     }
 }

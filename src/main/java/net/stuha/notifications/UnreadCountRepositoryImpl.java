@@ -6,7 +6,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 public class UnreadCountRepositoryImpl implements UnreadCountRepositoryCustom {
@@ -27,9 +29,11 @@ public class UnreadCountRepositoryImpl implements UnreadCountRepositoryCustom {
     private EntityManager em;
 
     @Override
-    public List<UnreadCount> readAllUnreadCounts(UUID userId) {
+    public Map<UUID, Long> readAllUnreadCounts(UUID userId) {
         final Query query = em.createNativeQuery(ALL_UNREAD_QUERY, "UnreadCount");
         query.setParameter(1, userId.toString());
-        return query.getResultList();
+        return ((List<UnreadCount>) query.getResultList())
+                .stream()
+                .collect(Collectors.toMap(UnreadCount::getConversationId, UnreadCount::getUnreadCount));
     }
 }
