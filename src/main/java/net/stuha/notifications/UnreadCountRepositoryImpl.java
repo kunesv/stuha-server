@@ -13,17 +13,18 @@ import java.util.stream.Collectors;
 @Repository
 public class UnreadCountRepositoryImpl implements UnreadCountRepositoryCustom {
     private static final String ALL_UNREAD_QUERY = "SELECT " +
-            "  lv.conversation_id AS conversation_id, " +
-            "  count(id) AS unread_count " +
-            "FROM message, " +
+            "  lv2.conversation_id, " +
+            "  COALESCE(lv1.unread_count, 0) unread_count " +
+            "FROM last_visit lv2 LEFT JOIN " +
             "  (SELECT " +
-            "     conversation_id, " +
-            "     last_visit_on " +
-            "   FROM last_visit " +
-            "   WHERE cast(user_id AS VARCHAR) = ?1) lv " +
-            "WHERE lv.conversation_id = message.conversation_id " +
-            "      AND lv.last_visit_on < message.created_on " +
-            "GROUP BY lv.conversation_id";
+            "     lv.conversation_id, " +
+            "     count(lv.conversation_id) unread_count " +
+            "   FROM last_visit lv " +
+            "     LEFT JOIN message m ON m.conversation_id = lv.conversation_id " +
+            "   WHERE cast(lv.user_id AS VARCHAR) = ?1 " +
+            "         AND lv.last_visit_on < m.created_on " +
+            "   GROUP BY lv.conversation_id) lv1 ON lv1.conversation_id = lv2.conversation_id " +
+            "WHERE cast(lv2.user_id AS VARCHAR) = ?1";
 
     @PersistenceContext
     private EntityManager em;
