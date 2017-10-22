@@ -56,7 +56,7 @@
         <dependency>
             <groupId>nl.martijndwars</groupId>
             <artifactId>web-push</artifactId>
-            <version>1.0.0</version>
+            <version>3.0.1</version>
         </dependency>
 
         <dependency>

@@ -2,21 +2,25 @@ package net.stuha.messages;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.stuha.messages.formattedText.FormattedText;
+import net.stuha.notifications.SubscriptionService;
 import net.stuha.security.AuthorizationService;
 import net.stuha.security.UnauthorizedRequestException;
 import net.stuha.security.User;
 import net.stuha.security.UserService;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class MessageController {
@@ -31,14 +35,18 @@ public class MessageController {
     @Autowired
     private ConversationService conversationService;
 
+    @Autowired
+    private SubscriptionService subscriptionService;
+
     @RequestMapping(value = "/message", method = RequestMethod.POST)
-    public List<Message> add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws UnauthorizedRequestException, InvalidMessageFormatException, IOException {
+    public List<Message> add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws UnauthorizedRequestException, InvalidMessageFormatException, IOException, InterruptedException, GeneralSecurityException, JoseException, ExecutionException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
-        final User user = userService.getUserDetail(userId);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
             throw new UnauthorizedRequestException();
         }
+
+        final User user = userService.getUserDetail(userId);
 
         if (!validIcon(message.getIconPath(), user)) {
             throw new InvalidMessageFormatException();
@@ -50,7 +58,11 @@ public class MessageController {
         List<MessageReplyTo> replyTos = messageService.checkReplyTos(messageReplies(replyTo), conversationId);
         message.setFormatted(new FormattedText(message.getRough(), replyTos).toString());
 
-        return messageService.add(message, userId);
+        final List<Message> recentMessages = messageService.add(message, userId);
+
+        subscriptionService.sendNotifications(message.getConversationId(), userId);
+
+        return recentMessages;
     }
 
     @RequestMapping(value = "/messages/{conversationId}/load", method = RequestMethod.GET)

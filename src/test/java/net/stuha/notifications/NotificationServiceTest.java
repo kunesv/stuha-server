@@ -1,8 +1,6 @@
 package net.stuha.notifications;
 
 import nl.martijndwars.webpush.PushService;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
 import org.junit.Test;
 
 public class NotificationServiceTest {
@@ -13,16 +11,5 @@ public class NotificationServiceTest {
 
         PushService pushService = new PushService();
 
-
-        Request request = Request.Post(endpoint);
-
-
-        request
-                .addHeader("TTL", "0")
-        ;
-        Response r = request.execute();
-
-
-        System.out.println(r);
     }
 }

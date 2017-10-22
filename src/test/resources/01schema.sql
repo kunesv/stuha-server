@@ -92,3 +92,18 @@ CREATE TABLE last_visit (
 );
 CREATE UNIQUE INDEX ON last_visit (user_id, conversation_id);
 CREATE INDEX ON last_visit (user_id);
+
+CREATE TABLE subscription (
+  id       UUID PRIMARY KEY,
+  endpoint TEXT UNIQUE  NOT NULL,
+  key      BYTEA        NOT NULL,
+  auth     BYTEA        NOT NULL
+);
+
+CREATE TABLE subscription_conversation (
+  id              UUID PRIMARY KEY,
+  subscription_id UUID REFERENCES subscription (id) NOT NULL,
+  conversation_id UUID REFERENCES conversation (id) NOT NULL,
+  user_id         UUID REFERENCES users (id)        NOT NULL
+);
+CREATE INDEX ON subscription_conversation (conversation_id, user_id);
