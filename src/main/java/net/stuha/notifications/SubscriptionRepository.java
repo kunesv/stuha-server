@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface SubscriptionRepository extends CrudRepository<Subscription, UUID> {
 
+    Subscription findFirstByEndpoint(String endpoint);
+
     @Query(value = "SELECT subscription.* FROM subscription_conversation LEFT JOIN subscription ON subscription_conversation.subscription_id = subscription.id WHERE conversation_id = ?1 AND user_id != ?2", nativeQuery = true)
     List<Subscription> findSubscriptions(UUID conversationId, UUID userId);
 }

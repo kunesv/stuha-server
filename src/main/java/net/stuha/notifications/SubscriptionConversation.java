@@ -1,5 +1,7 @@
 package net.stuha.notifications;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.UUID;
@@ -9,10 +11,12 @@ public class SubscriptionConversation {
     @Id
     private UUID id;
 
+    @JsonIgnore
     private UUID subscriptionId;
 
     private UUID conversationId;
 
+    @JsonIgnore
     private UUID userId;
 
     public UUID getId() {

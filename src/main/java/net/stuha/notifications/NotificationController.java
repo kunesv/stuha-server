@@ -4,16 +4,17 @@ import net.stuha.messages.ConversationService;
 import net.stuha.security.AuthorizationService;
 import net.stuha.security.UnauthorizedRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
 
-@Controller
+@RestController
 public class NotificationController {
 
     @Autowired
@@ -43,6 +44,12 @@ public class NotificationController {
         subscriptionConversation.setUserId(userId);
 
         return subscriptionService.addConversation(subscriptionConversation);
+    }
+
+    @RequestMapping(value = "/subscriptions", method = RequestMethod.GET)
+    public List<SubscriptionConversation> all(@RequestParam String endpoint, HttpServletRequest request) {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+        return subscriptionService.getAll(endpoint, userId);
     }
 
 //    @RequestMapping(value = "/notification/unsubscribe", method = RequestMethod.POST)

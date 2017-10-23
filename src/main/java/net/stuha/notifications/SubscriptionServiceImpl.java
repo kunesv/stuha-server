@@ -38,6 +38,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public Subscription subscribe(Subscription subscription) {
+        final Subscription persistedSubscription = subscriptionRepository.findFirstByEndpoint(subscription.getEndpoint());
+        if (persistedSubscription != null) {
+            return persistedSubscription;
+        }
+
         subscription.setId(UUID.randomUUID());
         return subscriptionRepository.save(subscription);
     }
@@ -65,5 +70,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionConversation.setId(UUID.randomUUID());
 
         return subscriptionConversationRepository.save(subscriptionConversation);
+    }
+
+    @Override
+    public List<SubscriptionConversation> getAll(String endpoint, UUID userId) {
+        return subscriptionConversationRepository.getAllForUserAndEndpoint(endpoint, userId);
     }
 }
