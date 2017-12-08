@@ -1,7 +1,9 @@
 package net.stuha.messages;
 
+import net.stuha.security.User;
 import net.stuha.security.UserConversation;
 import net.stuha.security.UserConversationRepository;
+import net.stuha.security.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Autowired
     private ConversationRepository conversationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private UserConversationRepository userConversationRepository;
@@ -52,5 +57,10 @@ public class ConversationServiceImpl implements ConversationService {
         userConversation.setUserId(memberId);
         userConversation.setConversationId(conversationId);
         return userConversationRepository.save(userConversation);
+    }
+
+    @Override
+    public List<User> findConversationMembers(UUID conversationId) {
+        return userRepository.findUserByConversation(conversationId);
     }
 }

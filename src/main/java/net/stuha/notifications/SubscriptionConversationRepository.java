@@ -13,4 +13,7 @@ public interface SubscriptionConversationRepository extends CrudRepository<Subsc
             "WHERE endpoint = ?1" +
             "      AND user_id = ?2", nativeQuery = true)
     List<SubscriptionConversation> getAllForUserAndEndpoint(String endpoint, UUID userId);
+
+
+    SubscriptionConversation findFirstByConversationIdAndUserId(UUID conversationId, UUID userId);
 }

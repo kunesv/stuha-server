@@ -4,6 +4,7 @@ package net.stuha.messages;
 import net.stuha.notifications.UnreadCountService;
 import net.stuha.security.AuthorizationService;
 import net.stuha.security.UnauthorizedRequestException;
+import net.stuha.security.User;
 import net.stuha.security.UserConversation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,5 +62,16 @@ public class ConversationController {
     @RequestMapping(value = "/conversations/unreadCounts", method = RequestMethod.GET)
     public Map<UUID, Long> unreadCounts(@RequestAttribute(AuthorizationService.GENUINE_USER_ID) UUID userId) {
         return unreadCountService.allUnreadCounts(userId);
+    }
+
+    @RequestMapping(value = "/conversation/{conversationId}/members", method = RequestMethod.GET)
+    public List<User> conversationMembers(@PathVariable @NotNull UUID conversationId, HttpServletRequest request) throws UnauthorizedRequestException {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+
+        if (!conversationService.userHasConversation(conversationId, userId)) {
+            throw new UnauthorizedRequestException();
+        }
+
+        return conversationService.findConversationMembers(conversationId);
     }
 }

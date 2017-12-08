@@ -1,5 +1,6 @@
 package net.stuha.messages;
 
+import net.stuha.security.User;
 import net.stuha.security.UserConversation;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ConversationService {
     Conversation add(Conversation conversation, UUID userId);
 
     UserConversation addMember(UUID conversationId, UUID memberId);
+
+    List<User> findConversationMembers(UUID conversationId);
 }

@@ -52,25 +52,13 @@ public class NotificationController {
         return subscriptionService.getAll(endpoint, userId);
     }
 
-//    @RequestMapping(value = "/notification/unsubscribe", method = RequestMethod.POST)
-//    public void unsubscribe(@ModelAttribute Subscription subscription) {
-//        subscriptions.remove(subscription);
-//        System.out.println(subscription);
-//    }
+    @RequestMapping(value = "/notification/unsubscribe", method = RequestMethod.POST)
+    public void unsubscribe(@RequestParam UUID conversationId, HttpServletRequest request) throws UnauthorizedRequestException {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+        if (!conversationService.userHasConversation(conversationId, userId)) {
+            throw new UnauthorizedRequestException();
+        }
 
-//    @RequestMapping(value = "/notification/test", method = RequestMethod.GET)
-//    public void test() throws IOException, GeneralSecurityException, InterruptedException, JoseException, ExecutionException {
-//
-//        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-//            Security.addProvider(new BouncyCastleProvider());
-//        }
-//
-//        PushService pushService = new PushService();
-//        for (Subscription subscription : subscriptions) {
-//            Notification notification = new Notification(subscription.getEndpoint(), subscription.getUserPublicKey(), subscription.getAuthAsBytes(), new String("").getBytes());
-//            HttpResponse response = pushService.sendNotifications(notification);
-//            System.out.println(response);
-//        }
-//    }
-
+        subscriptionService.removeConversation(conversationId, userId);
+    }
 }

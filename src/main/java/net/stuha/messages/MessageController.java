@@ -60,7 +60,7 @@ public class MessageController {
 
         final List<Message> recentMessages = messageService.add(message, userId);
 
-        subscriptionService.sendNotifications(message.getConversationId(), userId);
+        subscriptionService.sendNotifications(message.getConversationId(), userId, message);
 
         return recentMessages;
     }
