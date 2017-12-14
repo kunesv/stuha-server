@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -15,7 +16,7 @@ import java.util.stream.Stream;
 
 class FormattedTextParser {
     private static final String PARAGRAPH_SEPARATOR = "[\\r\\n]+";
-    private static final String URL_PATTERN = "https?://([a-z0-9.-]+\\.[a-z]+)([/?][;,/?:@%&=+$a-z0-9_.!~*()\\[\\]#-]*)?";
+    private static final String URL_PATTERN = "https?://([a-z0-9.-]+\\.[a-z]+)([/?][;,/?:@%&=+$\\w.!~*()\\[\\]#-]*)?";
     private static final String NON_URL_END = "?.,!";
     private static final String BRACKETS_START = "([{";
     private static final String BRACKETS_END = ")]}";
@@ -40,7 +41,7 @@ class FormattedTextParser {
             return a;
         });
 
-        return linksAndReplyTos.stream().map(parseRemainingText()).collect(Collectors.toList());
+        return linksAndReplyTos.stream().map(parseRemainingText()).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private static Function<TextNode, List<TextNode>> parseNewLines() {
@@ -66,7 +67,7 @@ class FormattedTextParser {
             if (TextNode.NodeType.ROUGH == node.nodeType) {
                 String text = ((RoughText) node).getText();
 
-                Pattern linkPattern = Pattern.compile(URL_PATTERN);
+                Pattern linkPattern = Pattern.compile(URL_PATTERN, Pattern.CASE_INSENSITIVE);
                 Matcher linkMatcher = linkPattern.matcher(text);
 
                 int lastMatchEnd = 0;
@@ -86,13 +87,19 @@ class FormattedTextParser {
                         nodes.add(new RoughText(lastCharacter));
                     } else {
                         int bracketPosition = BRACKETS_END.indexOf(lastCharacter);
-                        TextNode lastNode = nodes.get(nodes.size() - 1);
 
-                        if (bracketPosition != -1 && lastNode instanceof RoughText && BRACKETS_START.substring(bracketPosition, bracketPosition + 1).contains(((RoughText) lastNode).getText().substring(((RoughText) lastNode).getText().length() - 1))) {
-                            final boolean shortenedWithBracketEnd = shortened && linkMatcher.group(2).length() > 1;
+                        if (!nodes.isEmpty()) {
+                            TextNode lastNode = nodes.get(nodes.size() - 1);
 
-                            nodes.add(new Link(url.substring(0, url.length() - 1), linkMatcher.group(1), shortenedWithBracketEnd));
-                            nodes.add(new RoughText(lastCharacter));
+                            if (bracketPosition != -1 && lastNode instanceof RoughText && BRACKETS_START.substring(bracketPosition, bracketPosition + 1).contains(((RoughText) lastNode).getText().substring(((RoughText) lastNode).getText().length() - 1))) {
+                                final boolean shortenedWithBracketEnd = shortened && linkMatcher.group(2).length() > 1;
+
+                                nodes.add(new Link(url.substring(0, url.length() - 1), linkMatcher.group(1), shortenedWithBracketEnd));
+                                nodes.add(new RoughText(lastCharacter));
+
+                            } else {
+                                nodes.add(new Link(url, linkMatcher.group(1), shortened));
+                            }
                         } else {
                             nodes.add(new Link(url, linkMatcher.group(1), shortened));
                         }
@@ -159,6 +166,8 @@ class FormattedTextParser {
                 String text = ((RoughText) node).getText();
                 if (StringUtils.isNotBlank(text)) {
                     return new PlainText(text);
+                } else {
+                    return null;
                 }
             }
             return node;

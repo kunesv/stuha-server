@@ -31,5 +31,12 @@ public class FormattedTextTest {
         Assert.assertTrue(formattedText.getTextNodes().size() == 10);
     }
 
+    @Test
+    public void spaceInside() {
+        String roughWithBlankStringInside = "http://seznam.cz http://seznam.cz";
+        FormattedText formattedText = new FormattedText(roughWithBlankStringInside, new ArrayList<>());
 
+        String formatted = formattedText.toString();
+        Assert.assertTrue("{\"textNodes\":[{\"type\":\"LINK\",\"url\":\"http://seznam.cz\",\"label\":\"seznam.cz\",\"shortened\":false},{\"type\":\"LINK\",\"url\":\"http://seznam.cz\",\"label\":\"seznam.cz\",\"shortened\":false}]}".equals(formatted));
+    }
 }
