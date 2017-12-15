@@ -9,6 +9,10 @@ import java.util.List;
 
 public class FormattedTextTest {
 
+    /**
+     * ReplyTos
+     * (@User Name) in the rough text of the message should match the value in Key of messageReplyTo objects.
+     */
     @Test
     public void textProcessing() {
         String rough = "Ahoj @Test User, my friend.\n\rHave you seen http://seznam.cz? What do you think about this, @Test User(1)?";
@@ -31,12 +35,14 @@ public class FormattedTextTest {
         Assert.assertTrue(formattedText.getTextNodes().size() == 10);
     }
 
+    /**
+     * Space between two nodes (link or replyTo) should be ignored.
+     */
     @Test
     public void spaceInside() {
         String roughWithBlankStringInside = "http://seznam.cz http://seznam.cz";
         FormattedText formattedText = new FormattedText(roughWithBlankStringInside, new ArrayList<>());
 
-        String formatted = formattedText.toString();
-        Assert.assertTrue("{\"textNodes\":[{\"type\":\"LINK\",\"url\":\"http://seznam.cz\",\"label\":\"seznam.cz\",\"shortened\":false},{\"type\":\"LINK\",\"url\":\"http://seznam.cz\",\"label\":\"seznam.cz\",\"shortened\":false}]}".equals(formatted));
+        Assert.assertTrue(formattedText.getTextNodes().size() == 2);
     }
 }
