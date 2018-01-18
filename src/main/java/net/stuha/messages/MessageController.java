@@ -10,7 +10,12 @@ import net.stuha.security.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -39,7 +44,7 @@ public class MessageController {
     private SubscriptionService subscriptionService;
 
     @RequestMapping(value = "/message", method = RequestMethod.POST)
-    public List<Message> add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws UnauthorizedRequestException, InvalidMessageFormatException, IOException, InterruptedException, GeneralSecurityException, JoseException, ExecutionException {
+    public void add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws UnauthorizedRequestException, InvalidMessageFormatException, IOException, InterruptedException, GeneralSecurityException, JoseException, ExecutionException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
@@ -58,15 +63,13 @@ public class MessageController {
         List<MessageReplyTo> replyTos = messageService.checkReplyTos(messageReplies(replyTo), conversationId);
         message.setFormatted(new FormattedText(message.getRough(), replyTos).toString());
 
-        final List<Message> recentMessages = messageService.add(message, userId);
+        messageService.add(message, userId);
 
         subscriptionService.sendNotifications(message.getConversationId(), userId, message);
-
-        return recentMessages;
     }
 
     @RequestMapping(value = "/messages/{conversationId}/load", method = RequestMethod.GET)
-    public Messages load(@PathVariable UUID conversationId, HttpServletRequest request) throws UnauthorizedRequestException {
+    public Last10Messages load(@PathVariable UUID conversationId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
@@ -76,19 +79,19 @@ public class MessageController {
         return messageService.loadLast10(conversationId, userId);
     }
 
-    @RequestMapping(value = "/messages/{conversationId}/loadRecent/{messageId}", method = RequestMethod.GET)
-    public List<Message> loadRecent(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
-        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
-
-        if (!conversationService.userHasConversation(conversationId, userId)) {
-            throw new UnauthorizedRequestException();
-        }
-
-        return messageService.loadRecent(conversationId, userId, messageId);
-    }
+//    @RequestMapping(value = "/messages/{conversationId}/loadRecent/{messageId}", method = RequestMethod.GET)
+//    public List<Message> loadRecent(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
+//        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+//
+//        if (!conversationService.userHasConversation(conversationId, userId)) {
+//            throw new UnauthorizedRequestException();
+//        }
+//
+//        return messageService.loadRecent(conversationId, userId, messageId);
+//    }
 
     @RequestMapping(value = "/messages/{conversationId}/loadMore/{messageId}", method = RequestMethod.GET)
-    public List<Message> loadMore(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
+    public MoreMessages loadMore(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {

@@ -28,7 +28,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Transactional
     @Override
-    public List<Message> add(final Message message, UUID userId) throws InvalidMessageFormatException {
+    public void add(final Message message, UUID userId) throws InvalidMessageFormatException {
         message.setId(UUID.randomUUID());
         final List<Picture> pictures = new ArrayList<>();
 
@@ -55,7 +55,7 @@ public class MessageServiceImpl implements MessageService {
 
         messageRepository.save(persistentMessage);
 
-        return loadRecent(message.getConversationId(), userId, message.getLastMessageId());
+        // TODO: send to WebSocket, note that some have bean read ..
     }
 
     @Override
@@ -75,55 +75,73 @@ public class MessageServiceImpl implements MessageService {
 
     @Transactional
     @Override
-    public Messages loadLast10(UUID conversationId, UUID userId) {
-        Messages messages = new Messages();
+    public Last10Messages loadLast10(UUID conversationId, UUID userId) {
+        Last10Messages last10Messages = new Last10Messages();
         LocalDateTime lastVisit = lastVisitService.getLastVisitAndUpdate(userId, conversationId);
 
+        long totalCount = messageRepository.countAllByConversationId(conversationId);
+        long unreadCount = 10;
+
         if (lastVisit != null) {
-            messages.setUnreadCount(messageRepository.countAllByConversationIdAndCreatedOnAfter(conversationId, lastVisit));
+            unreadCount = messageRepository.countAllByConversationIdAndCreatedOnAfter(conversationId, lastVisit);
+            last10Messages.setRemainingUnreadCount(unreadCount - 10 > 0 ? unreadCount - 10 : 0);
         } else {
-            messages.setUnreadCount(messageRepository.countAllByConversationId(conversationId));
+            last10Messages.setRemainingUnreadCount(totalCount - 10 > 0 ? totalCount - 10 : 0);
         }
 
-        messages.getMessages().addAll(messageRepository.findFirst10ByConversationIdOrderByCreatedOnDesc(conversationId));
+        last10Messages.setMoreToLoad(totalCount > 10);
 
-        return messages;
-    }
+        if (totalCount > 0) {
+            last10Messages.getMessages().addAll(messageRepository.findFirst10ByConversationIdOrderByCreatedOnDesc(conversationId));
 
-    @Transactional
-    @Override
-    public List<Message> loadRecent(UUID conversationId, UUID userId) {
-        final LocalDateTime lastVisit = lastVisitService.getLastVisitAndUpdate(userId, conversationId);
-
-        return loadRecent(conversationId, lastVisit);
-    }
-
-    @Transactional
-    @Override
-    public List<Message> loadRecent(UUID conversationId, UUID userId, UUID messageId) {
-        lastVisitService.getLastVisitAndUpdate(userId, conversationId);
-
-        if (messageId != null) {
-            final Message startFrom = messageRepository.findOne(messageId);
-
-            return loadRecent(conversationId, startFrom.getCreatedOn());
-        } else {
-            return messageRepository.findByConversationIdOrderByCreatedOnDesc(conversationId);
+            for (int i = 0; i < unreadCount && i < last10Messages.getMessages().size(); i++) {
+                last10Messages.getMessages().get(i).setUnread(true);
+            }
         }
+        return last10Messages;
     }
 
-    private List<Message> loadRecent(UUID conversationId, LocalDateTime loadAfter) {
-        return messageRepository.findByConversationIdAndCreatedOnGreaterThanOrderByCreatedOnDesc(conversationId, loadAfter);
-    }
+//    @Transactional
+//    @Override
+//    public List<Message> loadRecent(UUID conversationId, UUID userId) {
+//        final LocalDateTime lastVisit = lastVisitService.getLastVisitAndUpdate(userId, conversationId);
+//
+//        return loadRecent(conversationId, lastVisit);
+//    }
+//
+//    @Transactional
+//    @Override
+//    public List<Message> loadRecent(UUID conversationId, UUID userId, UUID messageId) {
+//        lastVisitService.getLastVisitAndUpdate(userId, conversationId);
+//
+//        if (messageId != null) {
+//            final Message startFrom = messageRepository.findOne(messageId);
+//
+//            return loadRecent(conversationId, startFrom.getCreatedOn());
+//        } else {
+//            return messageRepository.findByConversationIdOrderByCreatedOnDesc(conversationId);
+//        }
+//    }
+//
+//    private List<Message> loadRecent(UUID conversationId, LocalDateTime loadAfter) {
+//        return messageRepository.findByConversationIdAndCreatedOnGreaterThanOrderByCreatedOnDesc(conversationId, loadAfter);
+//    }
 
     @Transactional
     @Override
-    public List<Message> loadMore(UUID conversationId, UUID userId, UUID messageId) {
+    public MoreMessages loadMore(UUID conversationId, UUID userId, UUID messageId) {
+        MoreMessages moreMessages = new MoreMessages();
+
         lastVisitService.getLastVisitAndUpdate(userId, conversationId);
 
         final Message startFrom = messageRepository.findOne(messageId);
 
-        return messageRepository.findFirst10ByConversationIdAndCreatedOnLessThanOrderByCreatedOnDesc(conversationId, startFrom.getCreatedOn());
+        long remainingCount = messageRepository.countAllByConversationIdAndCreatedOnLessThanOrderByCreatedOnDesc(conversationId, startFrom.getCreatedOn());
+
+        moreMessages.setMoreToLoad(remainingCount > 10);
+        moreMessages.setMessages(messageRepository.findFirst10ByConversationIdAndCreatedOnLessThanOrderByCreatedOnDesc(conversationId, startFrom.getCreatedOn()));
+
+        return moreMessages;
     }
 
     @Override

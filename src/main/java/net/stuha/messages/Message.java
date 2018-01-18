@@ -1,5 +1,6 @@
 package net.stuha.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import javax.persistence.Entity;
@@ -23,6 +24,7 @@ public class Message {
 
     private LocalDateTime createdOn;
 
+    @JsonIgnore
     private String rough;
 
     @JsonRawValue
@@ -35,7 +37,7 @@ public class Message {
     private List<Picture> images = new ArrayList<>();
 
     @Transient
-    private UUID lastMessageId;
+    private boolean unread = false;
 
     public UUID getId() {
         return id;
@@ -109,11 +111,11 @@ public class Message {
         this.images = images;
     }
 
-    public UUID getLastMessageId() {
-        return lastMessageId;
+    public boolean isUnread() {
+        return unread;
     }
 
-    public void setLastMessageId(UUID lastMessageId) {
-        this.lastMessageId = lastMessageId;
+    public void setUnread(boolean unread) {
+        this.unread = unread;
     }
 }
