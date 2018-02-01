@@ -10,11 +10,14 @@ public class FormattedText {
 
     private List<TextNode> textNodes;
 
+    private List<ReplyTo> replyTos;
+
     public FormattedText() {
     }
 
     public FormattedText(String rough, List<MessageReplyTo> messageReplyTos) {
-        textNodes = FormattedTextParser.parseText(rough, messageReplyTos);
+        textNodes = FormattedTextParser.parseText(rough);
+        replyTos = FormattedTextParser.parseReplyTos(messageReplyTos);
     }
 
     public List<TextNode> getTextNodes() {
@@ -23,6 +26,14 @@ public class FormattedText {
 
     public void setTextNodes(List<TextNode> textNodes) {
         this.textNodes = textNodes;
+    }
+
+    public List<ReplyTo> getReplyTos() {
+        return replyTos;
+    }
+
+    public void setReplyTos(List<ReplyTo> replyTos) {
+        this.replyTos = replyTos;
     }
 
     @Override

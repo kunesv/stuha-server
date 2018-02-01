@@ -3,6 +3,12 @@ package net.stuha.messages;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.stuha.notifications.LastVisitService;
+import net.stuha.security.UserConversation;
+import net.stuha.security.UserConversationRepository;
+import net.stuha.webSocket.MessageServer;
+import net.stuha.webSocket.MessageSimple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +22,8 @@ import java.util.UUID;
 @Service
 public class MessageServiceImpl implements MessageService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageServiceImpl.class);
+
     @Autowired
     private PictureRepository pictureRepository;
 
@@ -23,8 +31,10 @@ public class MessageServiceImpl implements MessageService {
     private MessageRepository messageRepository;
 
     @Autowired
-    private LastVisitService lastVisitService;
+    private UserConversationRepository userConversationRepository;
 
+    @Autowired
+    private LastVisitService lastVisitService;
 
     @Transactional
     @Override
@@ -55,7 +65,7 @@ public class MessageServiceImpl implements MessageService {
 
         messageRepository.save(persistentMessage);
 
-        // TODO: send to WebSocket, note that some have bean read ..
+        sendToConnected(message);
     }
 
     @Override
@@ -153,5 +163,17 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message findOne(UUID messageId) {
         return messageRepository.findOne(messageId);
+    }
+
+    private void sendToConnected(Message message) {
+        final List<UserConversation> userConversations = userConversationRepository.findAllByConversationId(message.getConversationId());
+        for (UserConversation userConversation : userConversations) {
+            final MessageSimple notification = new MessageSimple(message);
+            try {
+                MessageServer.sendText(userConversation.getUserId(), new ObjectMapper().writeValueAsString(notification));
+            } catch (JsonProcessingException e) {
+                LOGGER.error(String.format("JSON processing failed for MessageSimple. ConversationId: %s, MessageId: %s.", notification.getConversationId(), notification.getMessageId()), e);
+            }
+        }
     }
 }

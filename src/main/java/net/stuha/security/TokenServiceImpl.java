@@ -31,8 +31,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
+    public Token findToken(String token, UUID userId) {
+        return tokenRepository.findByUserIdAndToken(userId, token);
+    }
+
+    @Override
     public Token validateToken(String token, UUID userId) throws UnauthorizedUserException {
-        final Token tokenFound = tokenRepository.findByUserIdAndToken(userId, token);
+        final Token tokenFound = findToken(token, userId);
         if (tokenFound == null) {
             throw new UnauthorizedUserException();
         }

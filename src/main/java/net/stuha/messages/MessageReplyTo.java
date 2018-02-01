@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public class MessageReplyTo {
     private String replyToId;
-    private String key;
 
     private String iconPath;
     private String caption;
@@ -20,14 +19,6 @@ public class MessageReplyTo {
 
     public void setReplyToId(String replyToId) {
         this.replyToId = replyToId;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public String getIconPath() {

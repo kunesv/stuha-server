@@ -4,10 +4,8 @@ import net.stuha.messages.MessageReplyTo;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,9 +19,7 @@ class FormattedTextParser {
     private static final String BRACKETS_START = "([{";
     private static final String BRACKETS_END = ")]}";
 
-    static List<TextNode> parseText(String rough, List<MessageReplyTo> messageReplyTos) {
-        messageReplyTos.sort(Comparator.comparingInt(mrt -> -mrt.getKey().length()));
-
+    static List<TextNode> parseText(String rough) {
         List<TextNode> links = Stream.of(new RoughText(rough))
                 .map(parseNewLines())
                 .reduce(new ArrayList<>(), (a, b) -> {
@@ -36,12 +32,12 @@ class FormattedTextParser {
                     a.addAll(b);
                     return a;
                 });
-        List<TextNode> linksAndReplyTos = Stream.of(links).map(parseReplyTos(messageReplyTos)).reduce(new ArrayList<>(), (a, b) -> {
-            a.addAll(b);
-            return a;
-        });
 
-        return linksAndReplyTos.stream().map(parseRemainingText()).filter(Objects::nonNull).collect(Collectors.toList());
+        return links.stream().map(parseRemainingText()).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    static List<ReplyTo> parseReplyTos(List<MessageReplyTo> messageReplyTos) {
+        return messageReplyTos.stream().map(ReplyTo::new).collect(Collectors.toList());
     }
 
     private static Function<TextNode, List<TextNode>> parseNewLines() {
@@ -115,48 +111,6 @@ class FormattedTextParser {
                 nodes.add(node);
             }
             return nodes;
-        };
-    }
-
-    private static Function<List<TextNode>, List<TextNode>> parseReplyTos(List<MessageReplyTo> messageReplyTos) {
-        return inNodes -> {
-            for (MessageReplyTo messageReplyTo : messageReplyTos) {
-                Optional<List<TextNode>> outNodes = inNodes.stream().map(node -> {
-                    List<TextNode> nodes = new ArrayList<>();
-                    if (node instanceof RoughText) {
-                        String text = ((RoughText) node).getText();
-
-                        int lastIndex = 0;
-
-                        while (text.indexOf(messageReplyTo.getKey(), lastIndex) != -1) {
-                            int index = text.indexOf(messageReplyTo.getKey(), lastIndex);
-
-                            if (index > lastIndex) {
-                                nodes.add(new RoughText(text.substring(lastIndex, index)));
-                            }
-                            nodes.add(new ReplyTo(messageReplyTo));
-
-                            lastIndex = index + messageReplyTo.getKey().length();
-                        }
-
-                        if (lastIndex < text.length()) {
-                            nodes.add(new RoughText(text.substring(lastIndex)));
-                        }
-                    } else {
-                        nodes.add(node);
-                    }
-
-                    return nodes;
-                }).reduce((textNodes, textNodes2) -> {
-                    textNodes.addAll(textNodes2);
-                    return textNodes;
-                });
-
-                if (outNodes.isPresent()) {
-                    inNodes = outNodes.get();
-                }
-            }
-            return inNodes;
         };
     }
 
