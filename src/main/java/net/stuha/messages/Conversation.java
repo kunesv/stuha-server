@@ -3,6 +3,7 @@ package net.stuha.messages;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -14,6 +15,8 @@ public class Conversation {
     private String title;
 
     private Boolean noJoin;
+
+    private LocalDateTime lastMessageOn;
 
     public UUID getId() {
         return id;
@@ -37,5 +40,13 @@ public class Conversation {
 
     public void setNoJoin(Boolean noJoin) {
         this.noJoin = noJoin;
+    }
+
+    public LocalDateTime getLastMessageOn() {
+        return lastMessageOn;
+    }
+
+    public void setLastMessageOn(LocalDateTime lastMessageOn) {
+        this.lastMessageOn = lastMessageOn;
     }
 }

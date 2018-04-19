@@ -11,9 +11,10 @@ CREATE TABLE user_credentials (
 );
 
 CREATE TABLE conversation (
-  id      UUID PRIMARY KEY,
-  title   VARCHAR(255) UNIQUE NOT NULL,
-  no_join BOOLEAN             NOT NULL
+  id              UUID PRIMARY KEY,
+  title           VARCHAR(255) UNIQUE NOT NULL,
+  no_join         BOOLEAN             NOT NULL,
+  last_message_on TIMESTAMP           NOT NULL
 );
 
 CREATE TABLE icon (

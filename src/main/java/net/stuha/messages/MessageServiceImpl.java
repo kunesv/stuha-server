@@ -25,6 +25,9 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private LastVisitService lastVisitService;
 
+    @Autowired
+    private ConversationRepository conversationRepository;
+
 
     @Transactional
     @Override
@@ -54,6 +57,7 @@ public class MessageServiceImpl implements MessageService {
         }
 
         messageRepository.save(persistentMessage);
+        conversationRepository.updateLastMessageOn(persistentMessage.getCreatedOn(), persistentMessage.getConversationId());
 
         return loadRecent(message.getConversationId(), userId, message.getLastMessageId());
     }
