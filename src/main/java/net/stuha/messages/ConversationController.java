@@ -9,12 +9,17 @@ import net.stuha.security.UserConversation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -56,11 +61,6 @@ public class ConversationController {
 
     @RequestMapping(value = "/conversations", method = RequestMethod.GET)
     public List<Conversation> userConversations(@RequestAttribute(AuthorizationService.GENUINE_USER_ID) UUID userId) {
-        return conversationService.userConversations(userId);
-    }
-
-    @RequestMapping(value = "/conversations/unreadCounts", method = RequestMethod.GET)
-    public Map<UUID, Long> unreadCounts(@RequestAttribute(AuthorizationService.GENUINE_USER_ID) UUID userId) {
         return unreadCountService.allUnreadCounts(userId);
     }
 

@@ -3,6 +3,7 @@ package net.stuha.messages;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,6 +18,9 @@ public class Conversation {
     private Boolean noJoin;
 
     private LocalDateTime lastMessageOn;
+
+    @Transient
+    private Long unreadCount;
 
     public UUID getId() {
         return id;
@@ -48,5 +52,13 @@ public class Conversation {
 
     public void setLastMessageOn(LocalDateTime lastMessageOn) {
         this.lastMessageOn = lastMessageOn;
+    }
+
+    public Long getUnreadCount() {
+        return unreadCount;
+    }
+
+    public void setUnreadCount(Long unreadCount) {
+        this.unreadCount = unreadCount;
     }
 }

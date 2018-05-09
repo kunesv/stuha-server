@@ -1,8 +1,10 @@
 package net.stuha.notifications;
 
-import java.util.Map;
+import net.stuha.messages.Conversation;
+
+import java.util.List;
 import java.util.UUID;
 
 public interface UnreadCountRepositoryCustom {
-    Map<UUID, Long> readAllUnreadCounts(UUID userId);
+    List<Conversation> readAllUnreadCounts(UUID userId);
 }

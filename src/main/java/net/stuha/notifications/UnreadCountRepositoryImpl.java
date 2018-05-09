@@ -1,40 +1,59 @@
 package net.stuha.notifications;
 
+import net.stuha.messages.Conversation;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
 public class UnreadCountRepositoryImpl implements UnreadCountRepositoryCustom {
-    private static final String ALL_UNREAD_QUERY = "SELECT " +
-            "  lv2.conversation_id, " +
-            "  COALESCE(lv1.unread_count, 0) unread_count " +
-            "FROM last_visit lv2 LEFT JOIN " +
-            "  (SELECT " +
-            "     lv.conversation_id, " +
-            "     count(lv.conversation_id) unread_count " +
-            "   FROM last_visit lv " +
-            "     LEFT JOIN message m ON m.conversation_id = lv.conversation_id " +
-            "   WHERE cast(lv.user_id AS VARCHAR) = ?1 " +
-            "         AND lv.last_visit_on < m.created_on " +
-            "   GROUP BY lv.conversation_id) lv1 ON lv1.conversation_id = lv2.conversation_id " +
-            "WHERE cast(lv2.user_id AS VARCHAR) = ?1";
+
+
+    private static final String ALL_UNREAD_QUERY = "select " +
+            "  cast(c.id AS VARCHAR) id, c.title, c.no_join, c.last_message_on, " +
+            "  COALESCE(count.cnt, 0) unread_count " +
+            "from user_conversation uc " +
+            "  left join " +
+            "  (select " +
+            "     m.conversation_id, " +
+            "     count(m.conversation_id) cnt " +
+            "   from message m " +
+            "     join last_visit lv on lv.conversation_id = m.conversation_id " +
+            "   where lv.last_visit_on < m.created_on " +
+            "       and cast(lv.user_id AS VARCHAR) = ?1 " +
+            "   group by m.conversation_id) count " +
+            "    on uc.conversation_id = count.conversation_id " +
+            "  join conversation c on uc.conversation_id = c.id " +
+            "where cast(uc.user_id AS VARCHAR) = ?1 " +
+            "order by c.last_message_on DESC";
+
 
     @PersistenceContext
     private EntityManager em;
 
     @Override
-    public Map<UUID, Long> readAllUnreadCounts(UUID userId) {
-        final Query query = em.createNativeQuery(ALL_UNREAD_QUERY, "UnreadCount");
+    public List<Conversation> readAllUnreadCounts(UUID userId) {
+        final Query query = em.createNativeQuery(ALL_UNREAD_QUERY);
         query.setParameter(1, userId.toString());
-        return ((List<UnreadCount>) query.getResultList())
-                .stream()
-                .collect(Collectors.toMap(UnreadCount::getConversationId, UnreadCount::getUnreadCount));
+
+        return (List<Conversation>) query.getResultList().stream().map(recordToConversation).collect(Collectors.<Conversation>toList());
     }
+
+    private Function<Object[], Conversation> recordToConversation = record -> {
+        final Conversation conversation = new Conversation();
+        conversation.setId(UUID.fromString((String) record[0]));
+        conversation.setTitle((String) record[1]);
+        conversation.setNoJoin((Boolean) record[2]);
+        conversation.setLastMessageOn(((Timestamp) record[3]).toLocalDateTime());
+        conversation.setUnreadCount(((BigInteger) record[4]).longValue());
+        return conversation;
+    };
 }
