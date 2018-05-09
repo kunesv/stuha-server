@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Repository
 public class UnreadCountRepositoryImpl implements UnreadCountRepositoryCustom {
 
-
+    // FIXME: This is not the most optimized select ever. Optimize if registered users count exceeds ten.
     private static final String ALL_UNREAD_QUERY = "select " +
             "  cast(c.id AS VARCHAR) id, c.title, c.no_join, c.last_message_on, " +
             "  COALESCE(count.cnt, 0) unread_count " +
