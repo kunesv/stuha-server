@@ -19,6 +19,8 @@ public class Conversation {
 
     private LocalDateTime lastMessageOn;
 
+    private String iconPath;
+
     @Transient
     private Long unreadCount;
 
@@ -52,6 +54,14 @@ public class Conversation {
 
     public void setLastMessageOn(LocalDateTime lastMessageOn) {
         this.lastMessageOn = lastMessageOn;
+    }
+
+    public String getIconPath() {
+        return iconPath;
+    }
+
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
     }
 
     public Long getUnreadCount() {

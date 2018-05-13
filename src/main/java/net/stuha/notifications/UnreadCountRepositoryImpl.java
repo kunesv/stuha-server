@@ -18,7 +18,7 @@ public class UnreadCountRepositoryImpl implements UnreadCountRepositoryCustom {
 
     // FIXME: This is not the most optimized select ever. Optimize if registered users count exceeds ten.
     private static final String ALL_UNREAD_QUERY = "select " +
-            "  cast(c.id AS VARCHAR) id, c.title, c.no_join, c.last_message_on, " +
+            "  cast(c.id AS VARCHAR) id, c.title, c.no_join, c.last_message_on, c.icon_path, " +
             "  COALESCE(count.cnt, 0) unread_count " +
             "from user_conversation uc " +
             "  left join " +
@@ -53,7 +53,8 @@ public class UnreadCountRepositoryImpl implements UnreadCountRepositoryCustom {
         conversation.setTitle((String) record[1]);
         conversation.setNoJoin((Boolean) record[2]);
         conversation.setLastMessageOn(((Timestamp) record[3]).toLocalDateTime());
-        conversation.setUnreadCount(((BigInteger) record[4]).longValue());
+        conversation.setIconPath((String) record[4]);
+        conversation.setUnreadCount(((BigInteger) record[5]).longValue());
         return conversation;
     };
 }
