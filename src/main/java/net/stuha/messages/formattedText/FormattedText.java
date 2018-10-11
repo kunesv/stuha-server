@@ -10,6 +10,8 @@ public class FormattedText {
 
     private List<TextNode> textNodes;
 
+    private List<Award> awards;
+
     public FormattedText() {
     }
 
@@ -32,5 +34,13 @@ public class FormattedText {
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Unable to serialize JSON.", e);
         }
+    }
+
+    public List<Award> getAwards() {
+        return awards;
+    }
+
+    public void setAwards(List<Award> awards) {
+        this.awards = awards;
     }
 }

@@ -1,7 +1,6 @@
 package net.stuha.messages;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.stuha.messages.formattedText.FormattedText;
 import net.stuha.notifications.SubscriptionService;
 import net.stuha.security.AuthorizationService;
 import net.stuha.security.UnauthorizedRequestException;
@@ -56,9 +55,8 @@ public class MessageController {
         message.setCreatedOn(LocalDateTime.now());
 
         List<MessageReplyTo> replyTos = messageService.checkReplyTos(messageReplies(replyTo), conversationId);
-        message.setFormatted(new FormattedText(message.getRough(), replyTos).toString());
 
-        final List<Message> recentMessages = messageService.add(message, userId);
+        final List<Message> recentMessages = messageService.add(message, replyTos, userId);
 
         subscriptionService.sendNotifications(message.getConversationId(), userId, message);
 

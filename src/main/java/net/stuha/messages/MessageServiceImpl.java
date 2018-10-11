@@ -2,6 +2,8 @@ package net.stuha.messages;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.stuha.messages.formattedText.Award;
+import net.stuha.messages.formattedText.FormattedText;
 import net.stuha.notifications.LastVisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +33,11 @@ public class MessageServiceImpl implements MessageService {
 
     @Transactional
     @Override
-    public List<Message> add(final Message message, UUID userId) throws InvalidMessageFormatException {
+    public List<Message> add(final Message message, final List<MessageReplyTo> replyTos, final UUID userId) throws InvalidMessageFormatException {
         message.setId(UUID.randomUUID());
+
+        message.setFormatted(formatText(message, replyTos).toString());
+
         final List<Picture> pictures = new ArrayList<>();
 
         final Message persistentMessage = messageRepository.save(message);
@@ -139,5 +144,24 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message findOne(UUID messageId) {
         return messageRepository.findOne(messageId);
+    }
+
+
+    private FormattedText formatText(Message message, List<MessageReplyTo> replyTos) {
+        final FormattedText formattedText = new FormattedText(message.getRough(), replyTos);
+
+        formattedText.setAwards(countAwards(message));
+
+        return formattedText;
+    }
+
+    private List<Award> countAwards(Message message) {
+        final List<Award> awards = new ArrayList<>();
+
+        // RANICEK
+        awards.add(Award.RANICEK);
+
+
+        return awards;
     }
 }
