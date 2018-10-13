@@ -1,5 +1,5 @@
 .idea/
 *.iml
 target/
-src/main/**/*.yml
+src/main/**/*.yaml
 src/test/**/*data*.sql
