@@ -12,17 +12,19 @@ import java.util.UUID;
  */
 public class AwardRanicek extends Award {
 
-    private static final UUID APPLY_ONLY_TO_CONVERSATION_ID = UUID.fromString("00000000-0000-0000-0010-000000000001");
+    public AwardRanicek(MessageRepository messageRepository, AwardsProperties awardsProperties) {
+        super(messageRepository, awardsProperties);
+    }
 
     @Override
-    public boolean checkAwardAvailability(MessageRepository messageRepository, Message message) {
+    public boolean checkAwardAvailability(final Message message) {
         final LocalDateTime todayMorningStart = LocalDateTime.now().withHour(5).withMinute(30);
         final LocalDateTime todayMorningEnd = LocalDateTime.now().withHour(11).withMinute(0);
 
         final boolean isMorning = LocalDateTime.now().isAfter(todayMorningStart) && LocalDateTime.now().isBefore(todayMorningEnd);
 
         return isMorning
-                && message.getConversationId().equals(APPLY_ONLY_TO_CONVERSATION_ID)
-                && 0 == messageRepository.countAllByConversationIdAndCreatedOnAfter(message.getConversationId(), todayMorningStart);
+                && message.getConversationId().equals(UUID.fromString(getAwardsProperties().getRanicekConversationId()))
+                && 0 == getMessageRepository().countAllByConversationIdAndCreatedOnAfter(message.getConversationId(), todayMorningStart);
     }
 }

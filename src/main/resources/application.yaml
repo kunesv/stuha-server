@@ -22,8 +22,11 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 #logging:
-#  path: /var/log/stuha18-server
+#  path: /var/log/stuha-server
 
 push:
   public: BP1L6NuCPiYPiT9gCTJhxLxouPpFoSQZ3JurtuXkeEPAv7eeClEh3pBdFlUEtweIoKlw4S0fXmJAcrqefcTqhzo=
   private: AJ3sSQnTt7/THVKnjTn/RHrwJWQPgMiBXZl7NL7EcPWD
+
+awards:
+  ranicekConversationId: 00000000-0000-0000-0010-000000000001

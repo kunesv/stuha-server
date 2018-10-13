@@ -2,7 +2,9 @@ package net.stuha.messages;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.stuha.messages.awards.Award;
 import net.stuha.messages.awards.AwardType;
+import net.stuha.messages.awards.AwardsProperties;
 import net.stuha.messages.formattedText.FormattedText;
 import net.stuha.notifications.LastVisitService;
 import org.slf4j.Logger;
@@ -29,17 +31,22 @@ public class MessageServiceImpl implements MessageService {
     private final LastVisitService lastVisitService;
     private final ConversationRepository conversationRepository;
 
+    private final AwardsProperties awardsProperties;
+
     @Autowired
-    public MessageServiceImpl(PictureRepository pictureRepository, MessageRepository messageRepository, LastVisitService lastVisitService, ConversationRepository conversationRepository) {
+    public MessageServiceImpl(PictureRepository pictureRepository, MessageRepository messageRepository, LastVisitService lastVisitService, ConversationRepository conversationRepository, AwardsProperties awardsProperties) {
         Assert.notNull(pictureRepository);
         Assert.notNull(messageRepository);
         Assert.notNull(lastVisitService);
         Assert.notNull(conversationRepository);
+        Assert.notNull(awardsProperties);
 
         this.pictureRepository = pictureRepository;
         this.messageRepository = messageRepository;
         this.lastVisitService = lastVisitService;
         this.conversationRepository = conversationRepository;
+
+        this.awardsProperties = awardsProperties;
     }
 
     @Transactional
@@ -171,11 +178,12 @@ public class MessageServiceImpl implements MessageService {
 
         for (AwardType awardType : AwardType.values()) {
             try {
-                if ((boolean) awardType.getAwardClass().getMethod("checkAwardAvailability").invoke(messageRepository, message)) {
-                    awards.add(AwardType.RANICEK);
-//                saveAward(AwardType.RANICEK, message); // AwardType: AwardType.type, UserName, MessageId
+                final Award award = awardType.getAwardClass().getConstructor(MessageRepository.class, AwardsProperties.class).newInstance(messageRepository, awardsProperties);
+                if (award.checkAwardAvailability(message)) {
+                    awards.add(awardType);
+//                saveAward(awardType, message); // AwardType, UserName, MessageId
                 }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IllegalArgumentException e) {
                 LOGGER.error(String.format("Reflection for award type '%s' not properly set.", awardType), e);
             }
         }
