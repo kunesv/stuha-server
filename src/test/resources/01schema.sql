@@ -108,3 +108,17 @@ CREATE TABLE subscription_conversation (
   user_id         UUID REFERENCES users (id)        NOT NULL
 );
 CREATE INDEX ON subscription_conversation (conversation_id, user_id);
+
+CREATE TABLE award_type (
+  id   UUID PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
+CREATE INDEX ON award_type (name);
+
+CREATE TABLE message_awards (
+  id            UUID PRIMARY KEY,
+  award_type_id UUID REFERENCES award_type (id) NOT NULL,
+  message_id    UUID REFERENCES message (id)    NOT NULL,
+  user_name     VARCHAR(255)                    NOT NULL,
+  created_on    TIMESTAMP                       NOT NULL
+)

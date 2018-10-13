@@ -2,7 +2,7 @@ package net.stuha.messages;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.stuha.messages.formattedText.FormattedMessage;
+import net.stuha.messages.formatted.FormattedMessage;
 import net.stuha.notifications.LastVisitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,8 +1,8 @@
 package net.stuha.messages;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.stuha.messages.formattedText.FormattedMessage;
-import net.stuha.messages.formattedText.PlainText;
+import net.stuha.messages.formatted.FormattedMessage;
+import net.stuha.messages.formatted.PlainText;
 
 import java.io.IOException;
 import java.util.Optional;

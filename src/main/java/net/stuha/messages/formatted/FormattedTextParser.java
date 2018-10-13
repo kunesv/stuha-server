@@ -1,13 +1,9 @@
-package net.stuha.messages.formattedText;
+package net.stuha.messages.formatted;
 
 import net.stuha.messages.MessageReplyTo;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

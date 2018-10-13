@@ -1,13 +1,13 @@
-package net.stuha.messages.formattedText;
+package net.stuha.messages.formatted;
 
-public class RoughText extends TextNode {
+public class PlainText extends TextNode {
     private String text;
 
-    RoughText() {
-        this.nodeType = NodeType.ROUGH;
+    PlainText() {
+        this.nodeType = NodeType.PLAIN_TEXT;
     }
 
-    RoughText(String text) {
+    PlainText(String text) {
         this();
         this.text = text;
     }

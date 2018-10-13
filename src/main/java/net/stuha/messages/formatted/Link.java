@@ -1,4 +1,4 @@
-package net.stuha.messages.formattedText;
+package net.stuha.messages.formatted;
 
 public class Link extends TextNode {
     private String url;
