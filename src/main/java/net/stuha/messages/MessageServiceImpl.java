@@ -2,13 +2,16 @@ package net.stuha.messages;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.stuha.messages.formattedText.Award;
+import net.stuha.messages.awards.AwardType;
 import net.stuha.messages.formattedText.FormattedText;
 import net.stuha.notifications.LastVisitService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +20,8 @@ import java.util.UUID;
 
 @Service
 public class MessageServiceImpl implements MessageService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageServiceImpl.class);
 
     @Autowired
     private PictureRepository pictureRepository;
@@ -150,18 +155,27 @@ public class MessageServiceImpl implements MessageService {
     private FormattedText formatText(Message message, List<MessageReplyTo> replyTos) {
         final FormattedText formattedText = new FormattedText(message.getRough(), replyTos);
 
-        formattedText.setAwards(countAwards(message));
+        formattedText.setAwards(gatherAwards(message));
 
         return formattedText;
     }
 
-    private List<Award> countAwards(Message message) {
-        final List<Award> awards = new ArrayList<>();
+    private List<AwardType> gatherAwards(Message message) {
+        final List<AwardType> awards = new ArrayList<>();
 
-        // RANICEK
-        awards.add(Award.RANICEK);
-
+        for (AwardType awardType : AwardType.values()) {
+            try {
+                if ((boolean) awardType.getAwardClass().getMethod("checkAwardAvailability").invoke(messageRepository, message)) {
+                    awards.add(AwardType.RANICEK);
+//                saveAward(AwardType.RANICEK, message); // AwardType: AwardType.type, UserName, MessageId
+                }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                LOGGER.error(String.format("Reflection for award type '%s' not properly set.", awardType), e);
+            }
+        }
 
         return awards;
     }
+
+
 }

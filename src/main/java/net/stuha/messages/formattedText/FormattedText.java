@@ -3,6 +3,7 @@ package net.stuha.messages.formattedText;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.stuha.messages.MessageReplyTo;
+import net.stuha.messages.awards.AwardType;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class FormattedText {
 
     private List<TextNode> textNodes;
 
-    private List<Award> awards;
+    private List<AwardType> awards;
 
     public FormattedText() {
     }
@@ -36,11 +37,11 @@ public class FormattedText {
         }
     }
 
-    public List<Award> getAwards() {
+    public List<AwardType> getAwards() {
         return awards;
     }
 
-    public void setAwards(List<Award> awards) {
+    public void setAwards(List<AwardType> awards) {
         this.awards = awards;
     }
 }
