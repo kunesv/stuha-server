@@ -6,13 +6,32 @@
 #    hibernate:
 #      ddl-auto: validate
 
-#spring:
-#  datasource:
-#    url: jdbc:postgresql://[host]:[port]/[database_name]
-#    username:
-#    password:
-#    driverClassName: org.postgresql.Driver
-#    initialize: false
-#  jpa:
-#    hibernate:
-#      ddl-auto: validate
+spring:
+  datasource:
+    url: jdbc:postgresql://[host]:[port]/[database_name]
+    username:
+    password:
+    driverClassName: org.postgresql.Driver
+    initialize: false
+  jpa:
+    hibernate:
+      ddl-auto: validate
+#    show-sql: true
+  http:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+#logging:
+#  path: /var/log/stuha-server
+
+push:
+  public:
+  private:
+
+awards:
+  ranicek:
+    conversationId:
+    startHours:
+    startMinutes:
+    endHours:
+    endMinutes:
