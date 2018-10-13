@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import javax.transaction.Transactional;
 import java.lang.reflect.InvocationTargetException;
@@ -23,18 +24,23 @@ public class MessageServiceImpl implements MessageService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageServiceImpl.class);
 
-    @Autowired
-    private PictureRepository pictureRepository;
+    private final PictureRepository pictureRepository;
+    private final MessageRepository messageRepository;
+    private final LastVisitService lastVisitService;
+    private final ConversationRepository conversationRepository;
 
     @Autowired
-    private MessageRepository messageRepository;
+    public MessageServiceImpl(PictureRepository pictureRepository, MessageRepository messageRepository, LastVisitService lastVisitService, ConversationRepository conversationRepository) {
+        Assert.notNull(pictureRepository);
+        Assert.notNull(messageRepository);
+        Assert.notNull(lastVisitService);
+        Assert.notNull(conversationRepository);
 
-    @Autowired
-    private LastVisitService lastVisitService;
-
-    @Autowired
-    private ConversationRepository conversationRepository;
-
+        this.pictureRepository = pictureRepository;
+        this.messageRepository = messageRepository;
+        this.lastVisitService = lastVisitService;
+        this.conversationRepository = conversationRepository;
+    }
 
     @Transactional
     @Override
