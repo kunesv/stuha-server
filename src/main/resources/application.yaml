@@ -29,4 +29,9 @@ push:
   private: AJ3sSQnTt7/THVKnjTn/RHrwJWQPgMiBXZl7NL7EcPWD
 
 awards:
-  ranicekConversationId: 00000000-0000-0000-0010-000000000001
+  ranicek:
+    conversationId: 00000000-0000-0000-0010-000000000001
+    startHours: 17
+    startMinutes: 30
+    endHours: 23
+    endMinutes: 0

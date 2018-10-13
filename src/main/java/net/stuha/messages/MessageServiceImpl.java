@@ -48,11 +48,16 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> add(final Message message, final List<MessageReplyTo> replyTos, final UUID userId) throws InvalidMessageFormatException {
         message.setId(UUID.randomUUID());
 
-        message.setFormatted(formatMessage(message, replyTos).toString());
+        final FormattedMessage formattedMessage = formatMessage(message, replyTos);
+        formattedMessage.setAwards(awardService.computeAwardsForMessage(message));
+
+        message.setFormatted(formattedMessage.toString());
 
         final List<Picture> pictures = new ArrayList<>();
 
         final Message persistentMessage = messageRepository.save(message);
+
+        awardService.saveMessageAwards(persistentMessage, formattedMessage.getAwards());
 
         for (final Picture picture : message.getImages()) {
             final Picture persistentImage = pictureRepository.findOne(picture.getId());
@@ -160,11 +165,7 @@ public class MessageServiceImpl implements MessageService {
 
 
     private FormattedMessage formatMessage(Message message, List<MessageReplyTo> replyTos) {
-        final FormattedMessage formattedMessage = new FormattedMessage(message.getRough(), replyTos);
-
-        formattedMessage.setAwards(awardService.computeAwardsForMessage(message));
-
-        return formattedMessage;
+        return new FormattedMessage(message.getRough(), replyTos);
     }
 
 

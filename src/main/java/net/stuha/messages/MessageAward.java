@@ -3,6 +3,7 @@ package net.stuha.messages;
 import net.stuha.messages.awards.AwardType;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public class MessageAward {
     @Id
     private UUID id;
 
-    @Enumerated
+    @Enumerated(value = EnumType.STRING)
     private AwardType awardType;
     private UUID messageId;
     private String userName;

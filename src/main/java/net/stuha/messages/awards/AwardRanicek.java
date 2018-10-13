@@ -18,13 +18,15 @@ public class AwardRanicek extends Award {
 
     @Override
     public boolean checkAwardAvailability(final Message message) {
-        final LocalDateTime todayMorningStart = LocalDateTime.now().withHour(5).withMinute(30);
-        final LocalDateTime todayMorningEnd = LocalDateTime.now().withHour(11).withMinute(0);
+        final Ranicek ranicekProperties = getAwardsProperties().getRanicek();
+
+        final LocalDateTime todayMorningStart = LocalDateTime.now().withHour(ranicekProperties.getStartHours()).withMinute(ranicekProperties.getStartMinutes()).withSecond(0).withNano(0);
+        final LocalDateTime todayMorningEnd = LocalDateTime.now().withHour(ranicekProperties.getEndHours()).withMinute(ranicekProperties.getEndMinutes()).withSecond(0).withNano(0);
 
         final boolean isMorning = LocalDateTime.now().isAfter(todayMorningStart) && LocalDateTime.now().isBefore(todayMorningEnd);
 
         return isMorning
-                && message.getConversationId().equals(UUID.fromString(getAwardsProperties().getRanicekConversationId()))
+                && message.getConversationId().equals(UUID.fromString(ranicekProperties.getConversationId()))
                 && 0 == getMessageRepository().countAllByConversationIdAndCreatedOnAfter(message.getConversationId(), todayMorningStart);
     }
 }

@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AwardServiceImpl implements AwardService {
@@ -42,13 +43,6 @@ public class AwardServiceImpl implements AwardService {
                 final Award award = awardType.getAwardClass().getConstructor(MessageRepository.class, AwardsProperties.class).newInstance(messageRepository, awardsProperties);
                 if (award.checkAwardAvailability(message)) {
                     awards.add(awardType);
-
-                    final MessageAward messageAward = new MessageAward();
-                    messageAward.setAwardType(awardType);
-                    messageAward.setMessageId(message.getId());
-                    messageAward.setUserName(message.getUserName());
-                    messageAward.setCreatedOn(LocalDateTime.now());
-                    awardRepository.save(messageAward);
                 }
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IllegalArgumentException e) {
                 LOGGER.error(String.format("Reflection for award type '%s' not properly set.", awardType), e);
@@ -56,5 +50,21 @@ public class AwardServiceImpl implements AwardService {
         }
 
         return awards;
+    }
+
+    @Override
+    public List<MessageAward> saveMessageAwards(Message message, List<AwardType> awardTypes) {
+        final List<MessageAward> messageAwards = new ArrayList<>();
+        for (AwardType awardType : awardTypes) {
+            final MessageAward messageAward = new MessageAward();
+            messageAward.setId(UUID.randomUUID());
+            messageAward.setAwardType(awardType);
+            messageAward.setMessageId(message.getId());
+            messageAward.setUserName(message.getUserName());
+            messageAward.setCreatedOn(LocalDateTime.now());
+
+            messageAwards.add(awardRepository.save(messageAward));
+        }
+        return messageAwards;
     }
 }

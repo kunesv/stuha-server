@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "awards")
 public class AwardsProperties {
-    private String ranicekConversationId;
+    private Ranicek ranicek;
 
-    public String getRanicekConversationId() {
-        return ranicekConversationId;
+    public Ranicek getRanicek() {
+        return ranicek;
     }
 
-    public void setRanicekConversationId(String ranicekConversationId) {
-        this.ranicekConversationId = ranicekConversationId;
+    public void setRanicek(Ranicek ranicek) {
+        this.ranicek = ranicek;
     }
 }
 

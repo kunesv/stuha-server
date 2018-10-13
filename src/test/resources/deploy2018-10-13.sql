@@ -4,7 +4,7 @@ CREATE TABLE award_type (
 
 INSERT INTO award_type (name) VALUES ('RANICEK');
 
-CREATE TABLE message_awards (
+CREATE TABLE message_award (
   id         UUID PRIMARY KEY,
   award_type VARCHAR(15) REFERENCES award_type (name) NOT NULL,
   message_id UUID REFERENCES message (id)             NOT NULL,
