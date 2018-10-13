@@ -1,7 +1,7 @@
 package net.stuha.messages;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.stuha.messages.formattedText.FormattedText;
+import net.stuha.messages.formattedText.FormattedMessage;
 import net.stuha.messages.formattedText.PlainText;
 
 import java.io.IOException;
@@ -48,9 +48,9 @@ public class MessageReplyTo {
 
     public void setCaptionFromFormatted(String formatted) {
         try {
-            FormattedText formattedText = new ObjectMapper().readValue(formatted, FormattedText.class);
+            FormattedMessage formattedMessage = new ObjectMapper().readValue(formatted, FormattedMessage.class);
 
-            Optional<String> plainText = formattedText.getTextNodes().stream()
+            Optional<String> plainText = formattedMessage.getTextNodes().stream()
                     .filter(textNode -> textNode instanceof PlainText)
                     .map((textNode) -> ((PlainText) textNode).getText())
                     .reduce((s, s2) -> String.format("%s .. %s", s, s2));

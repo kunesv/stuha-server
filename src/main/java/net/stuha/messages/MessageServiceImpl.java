@@ -2,10 +2,7 @@ package net.stuha.messages;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.stuha.messages.awards.Award;
-import net.stuha.messages.awards.AwardType;
-import net.stuha.messages.awards.AwardsProperties;
-import net.stuha.messages.formattedText.FormattedText;
+import net.stuha.messages.formattedText.FormattedMessage;
 import net.stuha.notifications.LastVisitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.transaction.Transactional;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,23 +26,21 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final LastVisitService lastVisitService;
     private final ConversationRepository conversationRepository;
-
-    private final AwardsProperties awardsProperties;
+    private final AwardService awardService;
 
     @Autowired
-    public MessageServiceImpl(PictureRepository pictureRepository, MessageRepository messageRepository, LastVisitService lastVisitService, ConversationRepository conversationRepository, AwardsProperties awardsProperties) {
+    public MessageServiceImpl(PictureRepository pictureRepository, MessageRepository messageRepository, LastVisitService lastVisitService, ConversationRepository conversationRepository, AwardService awardService) {
         Assert.notNull(pictureRepository);
         Assert.notNull(messageRepository);
         Assert.notNull(lastVisitService);
         Assert.notNull(conversationRepository);
-        Assert.notNull(awardsProperties);
+        Assert.notNull(awardService);
 
         this.pictureRepository = pictureRepository;
         this.messageRepository = messageRepository;
         this.lastVisitService = lastVisitService;
         this.conversationRepository = conversationRepository;
-
-        this.awardsProperties = awardsProperties;
+        this.awardService = awardService;
     }
 
     @Transactional
@@ -54,7 +48,7 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> add(final Message message, final List<MessageReplyTo> replyTos, final UUID userId) throws InvalidMessageFormatException {
         message.setId(UUID.randomUUID());
 
-        message.setFormatted(formatText(message, replyTos).toString());
+        message.setFormatted(formatMessage(message, replyTos).toString());
 
         final List<Picture> pictures = new ArrayList<>();
 
@@ -165,30 +159,12 @@ public class MessageServiceImpl implements MessageService {
     }
 
 
-    private FormattedText formatText(Message message, List<MessageReplyTo> replyTos) {
-        final FormattedText formattedText = new FormattedText(message.getRough(), replyTos);
+    private FormattedMessage formatMessage(Message message, List<MessageReplyTo> replyTos) {
+        final FormattedMessage formattedMessage = new FormattedMessage(message.getRough(), replyTos);
 
-        formattedText.setAwards(gatherAwards(message));
+        formattedMessage.setAwards(awardService.computeAwardsForMessage(message));
 
-        return formattedText;
-    }
-
-    private List<AwardType> gatherAwards(Message message) {
-        final List<AwardType> awards = new ArrayList<>();
-
-        for (AwardType awardType : AwardType.values()) {
-            try {
-                final Award award = awardType.getAwardClass().getConstructor(MessageRepository.class, AwardsProperties.class).newInstance(messageRepository, awardsProperties);
-                if (award.checkAwardAvailability(message)) {
-                    awards.add(awardType);
-//                saveAward(awardType, message); // AwardType, UserName, MessageId
-                }
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IllegalArgumentException e) {
-                LOGGER.error(String.format("Reflection for award type '%s' not properly set.", awardType), e);
-            }
-        }
-
-        return awards;
+        return formattedMessage;
     }
 
 

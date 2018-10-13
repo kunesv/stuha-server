@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FormattedTextTest {
+public class FormattedMessageTest {
 
     /**
      * ReplyTos
@@ -30,9 +30,9 @@ public class FormattedTextTest {
         messageReply2.setKey("@Test User(1)");
         messageReplyTos.add(messageReply2);
 
-        FormattedText formattedText = new FormattedText(rough, messageReplyTos);
+        FormattedMessage formattedMessage = new FormattedMessage(rough, messageReplyTos);
 
-        Assert.assertTrue(formattedText.getTextNodes().size() == 10);
+        Assert.assertTrue(formattedMessage.getTextNodes().size() == 10);
     }
 
     /**
@@ -41,8 +41,8 @@ public class FormattedTextTest {
     @Test
     public void spaceInside() {
         String roughWithBlankStringInside = "http://seznam.cz http://seznam.cz";
-        FormattedText formattedText = new FormattedText(roughWithBlankStringInside, new ArrayList<>());
+        FormattedMessage formattedMessage = new FormattedMessage(roughWithBlankStringInside, new ArrayList<>());
 
-        Assert.assertTrue(formattedText.getTextNodes().size() == 2);
+        Assert.assertTrue(formattedMessage.getTextNodes().size() == 2);
     }
 }

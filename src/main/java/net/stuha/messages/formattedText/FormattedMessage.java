@@ -7,16 +7,17 @@ import net.stuha.messages.awards.AwardType;
 
 import java.util.List;
 
-public class FormattedText {
+public class FormattedMessage {
 
     private List<TextNode> textNodes;
 
     private List<AwardType> awards;
 
-    public FormattedText() {
+    public FormattedMessage() {
+        // Needed for Jackson
     }
 
-    public FormattedText(String rough, List<MessageReplyTo> messageReplyTos) {
+    public FormattedMessage(String rough, List<MessageReplyTo> messageReplyTos) {
         textNodes = FormattedTextParser.parseText(rough, messageReplyTos);
     }
 
