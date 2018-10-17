@@ -17,6 +17,7 @@ public class MessageAward {
     @Enumerated(value = EnumType.STRING)
     private AwardType awardType;
     private UUID messageId;
+    private UUID conversationId;
     private String userName;
     private LocalDateTime createdOn;
 
@@ -42,6 +43,14 @@ public class MessageAward {
 
     public void setMessageId(UUID messageId) {
         this.messageId = messageId;
+    }
+
+    public UUID getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(UUID conversationId) {
+        this.conversationId = conversationId;
     }
 
     public String getUserName() {

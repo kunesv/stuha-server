@@ -9,6 +9,7 @@ import net.stuha.security.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,17 +26,23 @@ import java.util.concurrent.ExecutionException;
 public class MessageController {
     public static final String REPLY_TO_FORMAT = "<replyTo://%s-%s-%s/>";
 
-    @Autowired
-    private MessageService messageService;
+    private final MessageService messageService;
+    private final UserService userService;
+    private final ConversationService conversationService;
+    private final SubscriptionService subscriptionService;
 
     @Autowired
-    private UserService userService;
+    public MessageController(MessageService messageService, UserService userService, ConversationService conversationService, SubscriptionService subscriptionService) {
+        Assert.notNull(messageService);
+        Assert.notNull(userService);
+        Assert.notNull(conversationService);
+        Assert.notNull(subscriptionService);
 
-    @Autowired
-    private ConversationService conversationService;
-
-    @Autowired
-    private SubscriptionService subscriptionService;
+        this.messageService = messageService;
+        this.userService = userService;
+        this.conversationService = conversationService;
+        this.subscriptionService = subscriptionService;
+    }
 
     @RequestMapping(value = "/message", method = RequestMethod.POST)
     public List<Message> add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws UnauthorizedRequestException, InvalidMessageFormatException, IOException, InterruptedException, GeneralSecurityException, JoseException, ExecutionException {

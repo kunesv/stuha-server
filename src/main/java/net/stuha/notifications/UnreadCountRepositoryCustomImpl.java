@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
-public class UnreadCountRepositoryImpl implements UnreadCountRepositoryCustom {
+public class UnreadCountRepositoryCustomImpl implements UnreadCountRepositoryCustom {
 
     // FIXME: This is not the most optimized select ever. Optimize if registered users count exceeds ten.
     private static final String ALL_UNREAD_QUERY = "select " +

@@ -3,6 +3,7 @@ package net.stuha.messages;
 import net.stuha.messages.awards.Award;
 import net.stuha.messages.awards.AwardType;
 import net.stuha.messages.awards.AwardsProperties;
+import net.stuha.messages.awards.Standing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,18 @@ public class AwardServiceImpl implements AwardService {
     private final MessageRepository messageRepository;
     private final AwardRepository awardRepository;
     private final AwardsProperties awardsProperties;
+    private final AwardRepositoryCustom awardRepositoryCustom;
 
-    public AwardServiceImpl(MessageRepository messageRepository, AwardRepository awardRepository, AwardsProperties awardsProperties) {
+    public AwardServiceImpl(MessageRepository messageRepository, AwardRepository awardRepository, AwardsProperties awardsProperties, AwardRepositoryCustom awardRepositoryCustom) {
         Assert.notNull(messageRepository);
         Assert.notNull(awardRepository);
         Assert.notNull(awardsProperties);
+        Assert.notNull(awardRepositoryCustom);
 
         this.messageRepository = messageRepository;
         this.awardRepository = awardRepository;
         this.awardsProperties = awardsProperties;
+        this.awardRepositoryCustom = awardRepositoryCustom;
     }
 
 
@@ -60,11 +64,17 @@ public class AwardServiceImpl implements AwardService {
             messageAward.setId(UUID.randomUUID());
             messageAward.setAwardType(awardType);
             messageAward.setMessageId(message.getId());
+            messageAward.setConversationId(message.getConversationId());
             messageAward.setUserName(message.getUserName());
             messageAward.setCreatedOn(LocalDateTime.now());
 
             messageAwards.add(awardRepository.save(messageAward));
         }
         return messageAwards;
+    }
+
+    @Override
+    public List<Standing> ranicekOverallStandings(UUID conversationId) {
+        return awardRepositoryCustom.findRanicekOverallStandings(conversationId);
     }
 }
