@@ -5,6 +5,7 @@ import java.math.BigInteger;
 public class Standing {
     private String userName;
     private BigInteger count;
+    private String iconPath;
 
     public String getUserName() {
         return userName;
@@ -20,5 +21,13 @@ public class Standing {
 
     public void setCount(BigInteger count) {
         this.count = count;
+    }
+
+    public String getIconPath() {
+        return iconPath;
+    }
+
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
     }
 }

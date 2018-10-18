@@ -15,12 +15,24 @@ import java.util.stream.Collectors;
 @Repository
 public class AwardRepositoryCustomImpl implements AwardRepositoryCustom {
 
-    private static final String RANICEK_STANDINGS_QUERY = "SELECT " +
-            "user_name, count(user_name) " +
-            "FROM message_award " +
-            "WHERE award_type = 'RANICEK' AND cast(conversation_id AS VARCHAR) = ?1 " +
-            "GROUP BY user_name " +
-            "ORDER BY 2 DESC";
+    private static final String RANICEK_STANDINGS_QUERY = "SELECT *\n" +
+            "FROM (\n" +
+            "       SELECT DISTINCT ON (award1.user_name)\n" +
+            "         award1.user_name,\n" +
+            "         awards_count,\n" +
+            "         icon_path\n" +
+            "       FROM\n" +
+            "         (SELECT\n" +
+            "            user_name,\n" +
+            "            count(user_name) awards_count\n" +
+            "          FROM message_award\n" +
+            "          WHERE award_type = 'RANICEK' AND cast(conversation_id AS VARCHAR) = ?1\n" +
+            "          GROUP BY user_name\n" +
+            "          ORDER BY 2 DESC) award1\n" +
+            "         JOIN message_award award2 ON award1.user_name = award2.user_name\n" +
+            "\n" +
+            "       ORDER BY award1.user_name, created_on) t\n" +
+            "ORDER BY awards_count DESC";
 
     @PersistenceContext
     private EntityManager em;
@@ -37,6 +49,7 @@ public class AwardRepositoryCustomImpl implements AwardRepositoryCustom {
         final Standing standing = new Standing();
         standing.setUserName((String) record[0]);
         standing.setCount((BigInteger) record[1]);
+        standing.setIconPath((String) record[2]);
         return standing;
     };
 }

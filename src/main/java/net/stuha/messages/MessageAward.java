@@ -19,6 +19,7 @@ public class MessageAward {
     private UUID messageId;
     private UUID conversationId;
     private String userName;
+    private String iconPath;
     private LocalDateTime createdOn;
 
     public UUID getId() {
@@ -59,6 +60,14 @@ public class MessageAward {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getIconPath() {
+        return iconPath;
+    }
+
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
     }
 
     public LocalDateTime getCreatedOn() {

@@ -118,5 +118,6 @@ CREATE TABLE message_awards (
   award_type VARCHAR(15) REFERENCES award_type (name) NOT NULL,
   message_id UUID REFERENCES message (id)             NOT NULL,
   user_name  VARCHAR(255)                             NOT NULL,
+  icon_path  VARCHAR(8)                               NOT NULL,
   created_on TIMESTAMP                                NOT NULL
 );

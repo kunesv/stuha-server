@@ -66,6 +66,7 @@ public class AwardServiceImpl implements AwardService {
             messageAward.setMessageId(message.getId());
             messageAward.setConversationId(message.getConversationId());
             messageAward.setUserName(message.getUserName());
+            messageAward.setIconPath(message.getIconPath());
             messageAward.setCreatedOn(LocalDateTime.now());
 
             messageAwards.add(awardRepository.save(messageAward));
