@@ -31,7 +31,7 @@ public class AwardRepositoryCustomImpl implements AwardRepositoryCustom {
             "          ORDER BY 2 DESC) award1\n" +
             "         JOIN message_award award2 ON award1.user_name = award2.user_name\n" +
             "\n" +
-            "       ORDER BY award1.user_name, created_on) t\n" +
+            "       ORDER BY award1.user_name, created_on DESC) t\n" +
             "ORDER BY awards_count DESC";
 
     @PersistenceContext
