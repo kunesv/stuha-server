@@ -1,5 +1,6 @@
 package net.stuha.messages;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDateTime;
@@ -20,5 +21,8 @@ public interface MessageRepository extends CrudRepository<Message, UUID> {
 
     List<Message> findFirst10ByConversationIdAndCreatedOnLessThanOrderByCreatedOnDesc(UUID conversationId, LocalDateTime createdOn);
 
+    List<Message> findByConversationIdAndCreatedOnLessThan(UUID conversationId, LocalDateTime createdOn, Pageable pageable);
+
     List<Message> findByConversationIdOrderByCreatedOnDesc(UUID conversationId);
+
 }

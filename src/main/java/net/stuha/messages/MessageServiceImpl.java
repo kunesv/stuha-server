@@ -7,6 +7,9 @@ import net.stuha.notifications.LastVisitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -150,6 +153,18 @@ public class MessageServiceImpl implements MessageService {
         final Message startFrom = messageRepository.findOne(messageId);
 
         return messageRepository.findFirst10ByConversationIdAndCreatedOnLessThanOrderByCreatedOnDesc(conversationId, startFrom.getCreatedOn());
+    }
+
+
+    @Override
+    public List<Message> loadUnread(UUID conversationId, UUID userId, UUID messageId, int unreadCount) {
+        lastVisitService.getLastVisitAndUpdate(userId, conversationId);
+
+        final Message startFrom = messageRepository.findOne(messageId);
+
+        Pageable unread = new PageRequest(0, unreadCount > 100 ? 100 : unreadCount, Sort.Direction.DESC, "createdOn");
+
+        return messageRepository.findByConversationIdAndCreatedOnLessThan(conversationId, startFrom.getCreatedOn(), unread);
     }
 
     @Override

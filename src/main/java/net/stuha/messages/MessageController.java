@@ -103,6 +103,17 @@ public class MessageController {
         return messageService.loadMore(conversationId, userId, messageId);
     }
 
+    @RequestMapping(value = "/messages/{conversationId}/loadUnread/{messageId}/{unreadCount}", method = RequestMethod.GET)
+    public List<Message> loadUnread(@PathVariable UUID conversationId, @PathVariable UUID messageId, @PathVariable int unreadCount, HttpServletRequest request) throws UnauthorizedRequestException {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+
+        if (!conversationService.userHasConversation(conversationId, userId)) {
+            throw new UnauthorizedRequestException();
+        }
+
+        return messageService.loadUnread(conversationId, userId, messageId, unreadCount);
+    }
+
     @RequestMapping(value = "/message", method = RequestMethod.GET)
     public Message one(@RequestParam UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);

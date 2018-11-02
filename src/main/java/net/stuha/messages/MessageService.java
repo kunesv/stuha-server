@@ -17,6 +17,8 @@ public interface MessageService {
 
     List<Message> loadMore(UUID conversationId, UUID userId, UUID messageId);
 
+    List<Message> loadUnread(UUID conversationId, UUID userId, UUID messageId, int unreadCount);
+
     Message findOne(UUID messageId, UUID conversationId);
 
     Message findOne(UUID messageId);
