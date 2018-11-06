@@ -70,15 +70,15 @@ public class MessageController {
         return recentMessages;
     }
 
-    @RequestMapping(value = "/messages/{conversationId}/load", method = RequestMethod.GET)
-    public Messages load(@PathVariable UUID conversationId, HttpServletRequest request) throws UnauthorizedRequestException {
+    @RequestMapping(value = "/messages/{conversationId}/loadInitial", method = RequestMethod.GET)
+    public Messages loadInitial(@PathVariable UUID conversationId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
         if (!conversationService.userHasConversation(conversationId, userId)) {
             throw new UnauthorizedRequestException();
         }
 
-        return messageService.loadLast10(conversationId, userId);
+        return messageService.loadInitial(conversationId, userId);
     }
 
     @RequestMapping(value = "/messages/{conversationId}/loadRecent/{messageId}", method = RequestMethod.GET)

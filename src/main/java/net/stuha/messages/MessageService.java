@@ -9,7 +9,7 @@ public interface MessageService {
 
     List<MessageReplyTo> checkReplyTos(List<MessageReplyTo> messageReplyTos, UUID conversationId);
 
-    Messages loadLast10(UUID conversationId, UUID userId);
+    Messages loadInitial(UUID conversationId, UUID userId);
 
     List<Message> loadRecent(UUID conversationId, UUID userId);
 

@@ -7,6 +7,7 @@ import net.stuha.notifications.LastVisitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,9 @@ import java.util.UUID;
 public class MessageServiceImpl implements MessageService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageServiceImpl.class);
+
+    @Value("${messages.init.load.size}")
+    private int initialLoadSize;
 
     private final PictureRepository pictureRepository;
     private final MessageRepository messageRepository;
@@ -104,17 +108,26 @@ public class MessageServiceImpl implements MessageService {
 
     @Transactional
     @Override
-    public Messages loadLast10(UUID conversationId, UUID userId) {
-        Messages messages = new Messages();
-        LocalDateTime lastVisit = lastVisitService.getLastVisitAndUpdate(userId, conversationId);
+    public Messages loadInitial(UUID conversationId, UUID userId) {
+        final Messages messages = new Messages();
+        final LocalDateTime lastVisit = lastVisitService.getLastVisitAndUpdate(userId, conversationId);
+        long unreadCount;
+        long totalCount = messageRepository.countAllByConversationId(conversationId);
+
+        messages.setTotalCount(totalCount);
 
         if (lastVisit != null) {
-            messages.setUnreadCount(messageRepository.countAllByConversationIdAndCreatedOnAfter(conversationId, lastVisit));
+            unreadCount = messageRepository.countAllByConversationIdAndCreatedOnAfter(conversationId, lastVisit);
         } else {
-            messages.setUnreadCount(messageRepository.countAllByConversationId(conversationId));
+            unreadCount = totalCount;
         }
 
-        messages.getMessages().addAll(messageRepository.findFirst10ByConversationIdOrderByCreatedOnDesc(conversationId));
+        messages.setUnreadCount(unreadCount);
+
+        Pageable fewInitial = new PageRequest(0, initialLoadSize, Sort.Direction.DESC, "createdOn");
+
+
+        messages.getMessages().addAll(messageRepository.findByConversationId(conversationId, fewInitial));
 
         return messages;
     }

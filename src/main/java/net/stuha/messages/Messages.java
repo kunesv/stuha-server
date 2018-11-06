@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Messages {
     private long unreadCount;
+    private long totalCount;
+
     private List<Message> messages = new ArrayList<>();
 
     public long getUnreadCount() {
@@ -13,6 +15,14 @@ public class Messages {
 
     public void setUnreadCount(long unreadCount) {
         this.unreadCount = unreadCount;
+    }
+
+    public long getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(long totalCount) {
+        this.totalCount = totalCount;
     }
 
     public List<Message> getMessages() {

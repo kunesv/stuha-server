@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface MessageRepository extends CrudRepository<Message, UUID> {
 
-    List<Message> findFirst10ByConversationIdOrderByCreatedOnDesc(UUID conversationId);
+    List<Message> findByConversationId(UUID conversationId, Pageable pageable);
 
     List<Message> findFirst1ByConversationIdAndId(UUID conversationId, UUID messageId);
 
