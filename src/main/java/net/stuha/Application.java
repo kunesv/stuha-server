@@ -1,12 +1,12 @@
 package net.stuha;
 
 import net.stuha.security.AuthorizationInterceptor;
+import net.stuha.security.LoginController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.WebContentInterceptor;
  * Executable
  */
 @SpringBootApplication
-@EnableAutoConfiguration(exclude = {ErrorMvcAutoConfiguration.class})
+@EnableAutoConfiguration
 public class Application extends WebMvcConfigurerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
@@ -43,7 +43,7 @@ public class Application extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authorizationInterceptor()).addPathPatterns("/**").excludePathPatterns("/login");
+        registry.addInterceptor(authorizationInterceptor()).addPathPatterns("/**").excludePathPatterns(LoginController.PATH, AppErrorController.PATH);
         registry.addInterceptor(webContentInterceptor()).addPathPatterns("/**");
 
     }

@@ -14,10 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class LoginController {
 
+    public static final String PATH = "/login";
+
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = PATH, method = RequestMethod.POST)
     public Token login(HttpServletRequest request, @ModelAttribute final LoginForm loginForm) throws Exception {
         return userService.validateUserLogin(loginForm);
     }
