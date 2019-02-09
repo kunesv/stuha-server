@@ -11,8 +11,6 @@ public interface MessageService {
 
     Messages loadInitial(UUID conversationId, UUID userId);
 
-    List<Message> loadRecent(UUID conversationId, UUID userId);
-
     List<Message> loadRecent(UUID conversationId, UUID userId, UUID messageId);
 
     List<Message> loadMore(UUID conversationId, UUID userId, UUID messageId);
@@ -22,4 +20,6 @@ public interface MessageService {
     Message findOne(UUID messageId, UUID conversationId);
 
     Message findOne(UUID messageId);
+
+    void markRead(UUID conversationId, UUID userId, UUID messageId);
 }

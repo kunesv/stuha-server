@@ -114,6 +114,17 @@ public class MessageController {
         return messageService.loadUnread(conversationId, userId, messageId, unreadCount);
     }
 
+    @RequestMapping(value = "/messages/{conversationId}/markRead/{messageId}", method = RequestMethod.GET)
+    public void markRead(@PathVariable UUID conversationId, @PathVariable UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
+        final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
+
+        if (!conversationService.userHasConversation(conversationId, userId)) {
+            throw new UnauthorizedRequestException();
+        }
+
+        messageService.markRead(conversationId, userId, messageId);
+    }
+
     @RequestMapping(value = "/message", method = RequestMethod.GET)
     public Message one(@RequestParam UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);

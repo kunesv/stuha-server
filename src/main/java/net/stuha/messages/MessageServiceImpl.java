@@ -88,6 +88,8 @@ public class MessageServiceImpl implements MessageService {
         messageRepository.save(persistentMessage);
         conversationRepository.updateLastMessageOn(persistentMessage.getCreatedOn(), persistentMessage.getConversationId());
 
+        markRead(message.getConversationId(), userId, message.getId());
+
         return loadRecent(message.getConversationId(), userId, message.getLastMessageId());
     }
 
@@ -110,7 +112,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Messages loadInitial(UUID conversationId, UUID userId) {
         final Messages messages = new Messages();
-        final LocalDateTime lastVisit = lastVisitService.getLastVisitAndUpdate(userId, conversationId);
+        final LocalDateTime lastVisit = lastVisitService.get(userId, conversationId);
         long unreadCount;
         long totalCount = messageRepository.countAllByConversationId(conversationId);
 
@@ -134,17 +136,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Transactional
     @Override
-    public List<Message> loadRecent(UUID conversationId, UUID userId) {
-        final LocalDateTime lastVisit = lastVisitService.getLastVisitAndUpdate(userId, conversationId);
-
-        return loadRecent(conversationId, lastVisit);
-    }
-
-    @Transactional
-    @Override
     public List<Message> loadRecent(UUID conversationId, UUID userId, UUID messageId) {
-        lastVisitService.getLastVisitAndUpdate(userId, conversationId);
-
         if (messageId != null) {
             final Message startFrom = messageRepository.findOne(messageId);
 
@@ -161,8 +153,6 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     @Override
     public List<Message> loadMore(UUID conversationId, UUID userId, UUID messageId) {
-        lastVisitService.getLastVisitAndUpdate(userId, conversationId);
-
         final Message startFrom = messageRepository.findOne(messageId);
 
         return messageRepository.findFirst10ByConversationIdAndCreatedOnLessThanOrderByCreatedOnDesc(conversationId, startFrom.getCreatedOn());
@@ -171,8 +161,6 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Message> loadUnread(UUID conversationId, UUID userId, UUID messageId, int unreadCount) {
-        lastVisitService.getLastVisitAndUpdate(userId, conversationId);
-
         final Message startFrom = messageRepository.findOne(messageId);
 
         Pageable unread = new PageRequest(0, unreadCount > 100 ? 100 : unreadCount, Sort.Direction.DESC, "createdOn");
@@ -189,6 +177,11 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Message findOne(UUID messageId) {
         return messageRepository.findOne(messageId);
+    }
+
+    @Override
+    public void markRead(UUID conversationId, UUID userId, UUID messageId) {
+        lastVisitService.update(userId, conversationId, findOne(messageId));
     }
 
 
