@@ -1,6 +1,6 @@
 .idea/
 *.iml
 target/
-src/main/**/*.yml
-src/main/**/*.yaml
-src/test/**/*data*.sql
+
+src/main/resources/*.yaml
+src/test/resources/*data*.sql
