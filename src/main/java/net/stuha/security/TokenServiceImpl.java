@@ -1,6 +1,7 @@
 package net.stuha.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import se.grunka.fortuna.Fortuna;
 
@@ -17,6 +18,12 @@ public class TokenServiceImpl implements TokenService {
     private TokenRepository tokenRepository;
 
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    @Value("${token.revalidateAfter}")
+    private int revalidateAfter;
+
+    @Value("${token.invalidateAfter}")
+    private int invalidateAfter;
 
     @Override
     public Token generateToken(UUID userId, Boolean autoRevalidate) {
@@ -37,8 +44,8 @@ public class TokenServiceImpl implements TokenService {
             throw new UnauthorizedUserException();
         }
 
-        if (LocalDateTime.now().minusMinutes(15).isAfter(tokenFound.getLastUpdate())) {
-            if (tokenFound.getRevalidated() || (!tokenFound.getAutoRevalidate() && LocalDateTime.now().minusMinutes(30).isAfter(tokenFound.getLastUpdate()))) {
+        if (LocalDateTime.now().minusMinutes(revalidateAfter).isAfter(tokenFound.getLastUpdate())) {
+            if (tokenFound.getRevalidated() || (!tokenFound.getAutoRevalidate() && LocalDateTime.now().minusMinutes(invalidateAfter).isAfter(tokenFound.getLastUpdate()))) {
                 throw new UnauthorizedUserException();
             }
 

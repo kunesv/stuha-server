@@ -26,6 +26,6 @@ public interface UserRepository extends CrudRepository<User, UUID> {
             "                       WHERE conversation_id = ?3)", nativeQuery = true)
     List<User> findRelated(String name, UUID userId, UUID conversationId);
 
-    @Query(value = "SELECT u.* FROM user_conversation uc JOIN users u ON (uc.user_id = u.id) WHERE conversation_id = ?1", nativeQuery = true)
+    @Query(value = "SELECT u.* FROM user_conversation uc JOIN users u ON (uc.user_id = u.id) WHERE conversation_id = ?1 ORDER BY u.name ASC", nativeQuery = true)
     List<User> findUserByConversation(UUID conversationId);
 }

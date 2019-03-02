@@ -31,7 +31,13 @@ push:
 awards:
   ranicek:
     conversationId:
-    startHours:
-    startMinutes:
-    endHours:
-    endMinutes:
+    startHours: 5
+    startMinutes: 30
+    endHours: 11
+    endMinutes: 00
+
+messages.init.load.size: 10
+
+token:
+  revalidateAfter: 15
+  invalidateAfter: 30

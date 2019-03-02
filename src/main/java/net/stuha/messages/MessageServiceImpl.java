@@ -88,8 +88,6 @@ public class MessageServiceImpl implements MessageService {
         messageRepository.save(persistentMessage);
         conversationRepository.updateLastMessageOn(persistentMessage.getCreatedOn(), persistentMessage.getConversationId());
 
-        markRead(message.getConversationId(), userId, message.getId());
-
         return loadRecent(message.getConversationId(), userId, message.getLastMessageId());
     }
 
