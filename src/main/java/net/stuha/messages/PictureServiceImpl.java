@@ -78,7 +78,7 @@ class PictureServiceImpl implements PictureService {
                         final BufferedImage bigPicture = ImageIO.read(multipartFile.getInputStream());
                         final BigPictureDimensions bigPictureDimensions = new BigPictureDimensions(bigPicture.getHeight(), bigPicture.getWidth());
 
-                        if (multipartFile.getSize() > SIZE_CONSTRAINT) {
+                        if (!"image/gif".equalsIgnoreCase(file.getContentType()) && multipartFile.getSize() > SIZE_CONSTRAINT) {
                             if (bigPicture.getHeight() > HEIGHT_CONSTRAINT) {
                                 bigPictureDimensions.setHeight(HEIGHT_CONSTRAINT);
                             }
