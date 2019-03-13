@@ -9,6 +9,8 @@ import net.stuha.security.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,6 +70,12 @@ public class MessageController {
         subscriptionService.sendNotifications(message.getConversationId(), userId, message);
 
         return recentMessages;
+    }
+
+    @MessageMapping("/msg")
+    @SendTo("/topic/msg")
+    public Message add(Message message) {
+        return message;
     }
 
     @RequestMapping(value = "/messages/{conversationId}/loadInitial", method = RequestMethod.GET)
