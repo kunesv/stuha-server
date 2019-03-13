@@ -13,6 +13,18 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 
 import java.util.List;
 
+/**
+ * +Apache Configuration
+ * <p>
+ * RewriteEngine on
+ * RewriteCond %{HTTP:UPGRADE} ^WebSocket$ [NC]
+ * RewriteCond %{HTTP:CONNECTION} Upgrade$ [NC]
+ * RewriteRule .* ws://localhost:8080%{REQUEST_URI} [L,P]
+ * RewriteCond %{REQUEST_URI} ^/api/(.*) [NC]
+ * RewriteRule (.*) http://localhost:8080/%1 [L,P]
+ * RewriteRule (.*) http://localhost:4000/$1 [L,P]
+ */
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebsocketConfiguration implements WebSocketMessageBrokerConfigurer {
