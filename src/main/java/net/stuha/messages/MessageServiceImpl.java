@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -34,20 +35,24 @@ public class MessageServiceImpl implements MessageService {
     private final LastVisitService lastVisitService;
     private final ConversationRepository conversationRepository;
     private final AwardService awardService;
+    private final ApplicationEventPublisher messageAddPublisher;
+
 
     @Autowired
-    public MessageServiceImpl(PictureRepository pictureRepository, MessageRepository messageRepository, LastVisitService lastVisitService, ConversationRepository conversationRepository, AwardService awardService) {
+    public MessageServiceImpl(PictureRepository pictureRepository, MessageRepository messageRepository, LastVisitService lastVisitService, ConversationRepository conversationRepository, AwardService awardService, ApplicationEventPublisher messageAddPublisher) {
         Assert.notNull(pictureRepository);
         Assert.notNull(messageRepository);
         Assert.notNull(lastVisitService);
         Assert.notNull(conversationRepository);
         Assert.notNull(awardService);
+        Assert.notNull(messageAddPublisher);
 
         this.pictureRepository = pictureRepository;
         this.messageRepository = messageRepository;
         this.lastVisitService = lastVisitService;
         this.conversationRepository = conversationRepository;
         this.awardService = awardService;
+        this.messageAddPublisher = messageAddPublisher;
     }
 
     @Transactional
@@ -87,6 +92,8 @@ public class MessageServiceImpl implements MessageService {
 
         messageRepository.save(persistentMessage);
         conversationRepository.updateLastMessageOn(persistentMessage.getCreatedOn(), persistentMessage.getConversationId());
+
+        messageAddPublisher.publishEvent(new MessageWrapper(persistentMessage, userId));
 
         return loadRecent(message.getConversationId(), userId, message.getLastMessageId());
     }

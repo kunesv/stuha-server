@@ -44,7 +44,7 @@ public class MessageController {
         this.subscriptionService = subscriptionService;
     }
 
-    @RequestMapping(value = "/message", method = RequestMethod.POST)
+    @PostMapping(value = "/message")
     public List<Message> add(@ModelAttribute final Message message, @RequestParam UUID conversationId, @RequestParam String replyTo, HttpServletRequest request) throws UnauthorizedRequestException, InvalidMessageFormatException, IOException, InterruptedException, GeneralSecurityException, JoseException, ExecutionException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
@@ -70,7 +70,7 @@ public class MessageController {
         return recentMessages;
     }
 
-    @RequestMapping(value = "/messages/{conversationId}/loadInitial", method = RequestMethod.GET)
+    @GetMapping(value = "/messages/{conversationId}/loadInitial")
     public Messages loadInitial(@PathVariable UUID conversationId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
 
@@ -125,7 +125,7 @@ public class MessageController {
         messageService.markRead(conversationId, userId, messageId);
     }
 
-    @RequestMapping(value = "/message", method = RequestMethod.GET)
+    @GetMapping(value = "/message")
     public Message one(@RequestParam UUID messageId, HttpServletRequest request) throws UnauthorizedRequestException {
         final UUID userId = (UUID) request.getAttribute(AuthorizationService.GENUINE_USER_ID);
         Message message = messageService.findOne(messageId);

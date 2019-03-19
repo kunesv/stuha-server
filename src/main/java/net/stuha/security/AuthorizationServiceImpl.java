@@ -21,12 +21,19 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     public boolean authorize(HttpServletRequest request, HttpServletResponse response) throws UnauthorizedUserException {
         final UUID userId;
         try {
-            userId = UUID.fromString(request.getHeader("userId"));
+            String uid = request.getHeader("userId");
+            if (StringUtils.isBlank(uid)) {
+                uid = request.getParameter("userId");
+            }
+            userId = UUID.fromString(uid);
         } catch (Exception e) {
             throw new UnauthorizedUserException();
         }
 
-        final String token = request.getHeader("token");
+        String token = request.getHeader("token");
+        if (StringUtils.isBlank(token)) {
+            token = request.getParameter("token");
+        }
         if (StringUtils.isBlank(token)) {
             throw new UnauthorizedUserException();
         }
