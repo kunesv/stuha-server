@@ -38,11 +38,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new UnauthorizedUserException();
         }
 
-        Token validToken = tokenService.validateToken(token, userId);
+        tokenService.validateToken(token, userId);
         request.setAttribute(GENUINE_USER_ID, userId);
-        if (!StringUtils.equals(token, validToken.getToken())) {
-            response.setHeader("token", validToken.getToken());
-        }
 
         return true;
     }

@@ -3,8 +3,10 @@ package net.stuha.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import se.grunka.fortuna.Fortuna;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.UUID;
@@ -14,8 +16,7 @@ public class TokenServiceImpl implements TokenService {
 
     private final Random random = Fortuna.createInstance();
 
-    @Autowired
-    private TokenRepository tokenRepository;
+    private final TokenRepository tokenRepository;
 
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -24,6 +25,13 @@ public class TokenServiceImpl implements TokenService {
 
     @Value("${token.invalidateAfter}")
     private int invalidateAfter;
+
+    @Autowired
+    public TokenServiceImpl(TokenRepository tokenRepository) {
+        Assert.notNull(tokenRepository);
+
+        this.tokenRepository = tokenRepository;
+    }
 
     @Override
     public Token generateToken(UUID userId, Boolean autoRevalidate) {
@@ -38,30 +46,30 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token validateToken(String token, UUID userId) throws UnauthorizedUserException {
+    public void validateToken(String token, UUID userId) throws UnauthorizedUserException {
+        final Token tokenFound = tokenRepository.findByUserIdAndToken(userId, token);
+        if (tokenFound == null) {
+            throw new UnauthorizedUserException();
+        }
+    }
+
+    @Override
+    public Token revalidateToken(HttpServletRequest request, UUID userId) throws UnauthorizedUserException {
+        String token = request.getHeader("token");
+
         final Token tokenFound = tokenRepository.findByUserIdAndToken(userId, token);
         if (tokenFound == null) {
             throw new UnauthorizedUserException();
         }
 
-        if (LocalDateTime.now().minusMinutes(revalidateAfter).isAfter(tokenFound.getLastUpdate())) {
-            if (tokenFound.getRevalidated() || (!tokenFound.getAutoRevalidate() && LocalDateTime.now().minusMinutes(invalidateAfter).isAfter(tokenFound.getLastUpdate()))) {
-                throw new UnauthorizedUserException();
-            }
+        final Token newToken = new Token(tokenFound);
+        newToken.setId(UUID.randomUUID());
+        newToken.setLastUpdate(LocalDateTime.now());
+        newToken.setToken(newTokenValue());
 
-            final Token newToken = new Token(tokenFound);
-            newToken.setId(UUID.randomUUID());
-            newToken.setLastUpdate(LocalDateTime.now());
-            newToken.setToken(newTokenValue());
+        tokenRepository.delete(tokenFound.getId());
 
-            tokenFound.setRevalidated(true);
-            tokenFound.setLastUpdate(LocalDateTime.now());
-            tokenRepository.save(tokenFound);
-
-            return tokenRepository.save(newToken);
-        }
-
-        return tokenFound;
+        return tokenRepository.save(newToken);
     }
 
     private String newTokenValue() {
